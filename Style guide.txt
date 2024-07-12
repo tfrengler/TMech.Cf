@@ -5,6 +5,20 @@ CFCs:
 - Do not use invokeImplicitAccessor because if someone - by mistake - sets a variable on a component by doing `myComponent.myVar = 2`
   and you use `var something = myComponent.MyVar` instead of `var something = myComponent.getMyVar()` you are in trouble and this is hard to debug
 
+CFC TEMPLATE:
+component displayname="x" modifier="final" output="false" accessors="false" persistent="true"
+{
+    // PUBLIC
+    property name="xxx" type="string" getter="true" setter="false";
+
+    // PRIVATE
+    property name="xxx" type="string" getter="false" setter="false";
+
+    public x function Init() {
+        return this;
+    }
+}
+
 CFC variables/properties:
 - Use cfproperty for ALL instance variables with the following baseline convention:
     property name="xxx" type="string" getter="true" setter="false";
