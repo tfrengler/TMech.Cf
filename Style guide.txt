@@ -1,0 +1,17 @@
+CFCs:
+- Use script style (no tags)
+- Use the following convention as baseline for component definition:
+    component displayname="x" modifier="final" output="false" accessors="false" persistent="true"
+- Do not use invokeImplicitAccessor because if someone - by mistake - sets a variable on a component by doing `myComponent.myVar = 2`
+  and you use `var something = myComponent.MyVar` instead of `var something = myComponent.getMyVar()` you are in trouble and this is hard to debug
+
+CFC variables/properties:
+- Use cfproperty for ALL instance variables with the following baseline convention:
+    property name="xxx" type="string" getter="true" setter="false";
+- For properties if type is a Java-object then use "any" and add a comment above or behind to indicate it is a Java-object
+- For properties setter=false by default so that variables cannot be mutated from outside UNLESS that is desired
+- To access properties from outside the cfc use getXXX()
+- For properties just rely on setter=true to auto-generate the setter for you if mutation is allowed
+- For properties if you require special logic/extra checks on mutating a property set setter=false and write a custom setter
+- Always refer to properties/variables inside of CFC methods using variables.xxx
+- Careful with static variables as those can be mutated if public
