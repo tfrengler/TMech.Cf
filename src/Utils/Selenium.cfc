@@ -1,4 +1,7 @@
-component displayname="Selenium" modifier="final" output="false" accessors="false" persistent="true" hint="Component representing Selenium, that serves as a helper interface for resolving and getting references to underlying Selenium Java classes, types, enums etc." {
+/**
+ * Component representing Selenium, that serves as a helper interface for resolving and getting references to underlying Selenium Java classes, types, enums etc.
+ */
+component displayname="Selenium" modifier="final" output="false" accessors="false" persistent="true" {
 
     property name="Jars" type="array" getter="false" setter="false" default="";
 
@@ -12,7 +15,7 @@ component displayname="Selenium" modifier="final" output="false" accessors="fals
         var SeleniumJars = directoryList(pathToSeleniumJarFolder, false, "path", "*.jar");
         if (SeleniumJars.len() == 0)
         {
-            throw("Error instantiating Selenium-component. The folder in 'pathToSeleniumJarFolder' exist but appears to be empty (expected jar-files): " & arguments.pathToSeleniumJarFolder);
+            throw("Error instantiating Selenium-component. The folder in parameter 'pathToSeleniumJarFolder' exist but appears to be empty (expected jar-files): " & arguments.pathToSeleniumJarFolder);
         }
 
         variables.Jars = SeleniumJars;
@@ -24,10 +27,13 @@ component displayname="Selenium" modifier="final" output="false" accessors="fals
         return this;
     }
 
+    // Enums, interfaces and static classes go here
     property name="ProxyType"               type="any" getter="true" setter="false" default="";
     property name="By"                      type="any" getter="true" setter="false" default="";
     property name="ScreenshotOutputType"    type="any" getter="true" setter="false" default="";
 
+    // Functions return standard classes but they are just references and the caller has to call init() on them.
+    // The exceptions are classes with a single constructor. If the single constructor requires arguments then they are implemented by the functions here.
     public any function FirefoxDriverService() {
         return createObject("java", "org.openqa.selenium.firefox.GeckoDriverService", variables.Jars);
     }
