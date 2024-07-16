@@ -13,19 +13,23 @@
     <cfset this.scriptProtect = "all" />
     <cfset this.invokeImplicitAccessor = false />
 
-    <cfset this.root = getDirectoryFromPath(getCurrentTemplatePath()) />
-    <cfset this.mappings = {} />
-    <cfset this.mappings["/Models"] = getDirectoryFromPath(getCurrentTemplatePath()) & "Models" />
+    <cfset this.appRoot = getDirectoryFromPath(getCurrentTemplatePath()) />
+    <cfset this.srcRoot = this.appRoot & "src/" />
 
-    <cffunction name="onApplicationStart" returnType="boolean" output="false">
+    <cfset this.mappings = {} />
+    <cfset this.mappings["/Models"] = this.srcRoot & "Models" />
+    <cfset this.mappings["/Services"] = this.srcRoot & "Services" />
+    <cfset this.mappings["/Utils"] = this.srcRoot & "Utils" />
+
+    <cffunction name="onApplicationStart" returnType="boolean" output="true">
     <cfscript>
         application.assert = (required bool condition, string message = "") => {
             if (!condition) {
                 throw("ERROR: Assertion failed! #message#");
             }
         }
-        
-        session.Selenium = new Selenium(this.root & "SeleniumLibs");
+
+        session.Selenium = new src.Utils.Selenium(this.appRoot & "SeleniumLibs");
 
         return true;
     </cfscript>
