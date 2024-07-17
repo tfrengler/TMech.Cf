@@ -28,9 +28,9 @@ component displayname="Selenium" modifier="final" output="false" accessors="fals
     }
 
     // Enums, interfaces and static classes go here
-    property name="ProxyType"               type="any" getter="true" setter="false" default="";
-    property name="By"                      type="any" getter="true" setter="false" default="";
-    property name="ScreenshotOutputType"    type="any" getter="true" setter="false" default="";
+    property name="ProxyType"               type="any" getter="true" setter="false";
+    property name="By"                      type="any" getter="true" setter="false";
+    property name="ScreenshotOutputType"    type="any" getter="true" setter="false";
 
     // Functions return standard classes but they are just references and the caller has to call init() on them.
     // The exceptions are classes with a single constructor. If the single constructor requires arguments then they are implemented by the functions here.
