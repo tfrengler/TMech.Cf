@@ -1,5 +1,5 @@
 /**
- * Quick and dirty assertion library to assist in unit testing
+ * Quick and dirty assertion library to assist in unit testing. These are simple, static non-configurable assertions with no support for compound validations.
  */
 component displayname="Assert" modifier="final" output="false" accessors="false" persistent="true" {
 

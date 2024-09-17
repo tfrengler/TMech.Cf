@@ -67,8 +67,8 @@
     writeOutput("<p>On login-page</p>");
     cfflush();
 
-    LoginUsername = "TestAutomation@denhaag.nl";
-    LoginPassword = "gatKK[_6@eK!^B&b";
+    LoginUsername = "";
+    LoginPassword = "";
 
     // writeDump(ChromeDriver.findElement(Selenium.By.id("Input_UsernameVal")));
     // ChromeDriver.quit();
