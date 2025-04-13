@@ -50,6 +50,10 @@ component displayname="Selenium" modifier="final" output="false" accessors="fals
         return createObject("java", "org.openqa.selenium.chrome.ChromeDriverService", variables.Jars);
     }
 
+    public any function ChromeDriverServiceBuilder() {
+        return createObject("java", "org.openqa.selenium.chrome.ChromeDriverService$Builder", variables.Jars);
+    }
+
     public any function ChromeOptions() {
         return createObject("java", "org.openqa.selenium.chrome.ChromeOptions", variables.Jars);
     }
@@ -72,5 +76,9 @@ component displayname="Selenium" modifier="final" output="false" accessors="fals
 
     public any function Dimension(required numeric width, required numeric height) {
         return createObject("java", "org.openqa.selenium.Dimension", variables.Jars).init(width, height);
+    }
+
+    public any function GetHandle(required string javaObject) {
+        return createObject("java", arguments.javaObject, variables.Jars);
     }
 }
