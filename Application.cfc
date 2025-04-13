@@ -29,6 +29,25 @@
             }
         }
 
+        application.isJavaObject = (required any object) => {
+            if (isNull(arguments.object)) return false;
+
+            if (
+                isSimpleValue(arguments.object) is true ||
+                isArray(arguments.object) is true
+            ) {
+                return false;
+            }
+
+            var baseClassName = getMetadata(arguments.object).getClass().getName();
+
+            if (baseClassName is "java.lang.Class") {
+                return true;
+            }
+
+            return false;
+        }
+
         application.Selenium = new src.Utils.Selenium(this.appRoot & "SeleniumLibs");
 
         return true;

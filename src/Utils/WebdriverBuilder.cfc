@@ -81,9 +81,9 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
     public WebdriverBuilder function UsingDriverService(required any service) {
         ThrowOnLocalOnly();
 
-        // if (!isInstanceOf(arguments.service, "org.openqa.selenium.remote.service.DriverService")) {
-        //     throw("Expected argument 'service' to be an instance of 'org.openqa.selenium.remote.service.DriverService'");
-        // }
+        if (application.isJavaObject(arguments.service)) {
+            throw("Expected argument 'service' to be an instance of 'org.openqa.selenium.remote.service.DriverService'");
+        }
 
         variables.DriverService = arguments.service;
         return this;
@@ -114,6 +114,17 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
     // Final
 
     public Models.WebdriverContext function Initialize() {
-        // TODO
+        return new WebdriverContext(
+            variables.IsRemote,
+            variables.IsHeadless,
+            variables.IsFullscreen,
+            variables.WindowSize,
+            variables.DriverService,
+            variables.BrowserBinary,
+            variables.DownloadFolder,
+            variables.Browser,
+            variables.RemoteServerUrl,
+            variables.BrowserArguments
+        );
     }
 }
