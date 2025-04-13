@@ -21,7 +21,7 @@
     <cfset this.mappings["/Services"] = this.srcRoot & "Services" />
     <cfset this.mappings["/Utils"] = this.srcRoot & "Utils" />
 
-    <cffunction name="onApplicationStart" returnType="boolean" output="true">
+    <cffunction name="onApplicationStart" returnType="boolean" output="false">
     <cfscript>
         application.assert = (required bool condition, string message = "") => {
             if (!condition) {
@@ -29,7 +29,7 @@
             }
         }
 
-        session.Selenium = new src.Utils.Selenium(this.appRoot & "SeleniumLibs");
+        application.Selenium = new src.Utils.Selenium(this.appRoot & "SeleniumLibs");
 
         return true;
     </cfscript>
