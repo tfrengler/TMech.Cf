@@ -15,7 +15,7 @@
 
 <cfscript>
     Tester = new UnitTester("ChromeProvider.cfc");
-    ChromeTestDir = "C:/Temp/Chrome_Test";
+    ChromeTestDir = "C:\Dev\tools\chrome_test";
 
     Tester.BeginTests("Init");
 
@@ -88,6 +88,21 @@
         var Instance = new Services.ChromeProvider(ChromeTestDir);
         var LatestVersion = Instance.GetLatestAvailableVersion("linux64");
         Assert::StringNotEmpty(LatestVersion);
+    });
+
+    Tester.EndTests();
+    Tester.BeginTests("Download latest version");
+
+    Tester.RunTest("Download latest Windows version", () => {
+        var Instance = new Services.ChromeProvider(ChromeTestDir);
+        Instance.ClearInstallLocation();
+        Assert::DoesNotThrow(() => Instance.DownloadLatestVersion("win64"));
+    });
+
+    Tester.RunTest("Download latest Linux version", () => {
+        var Instance = new Services.ChromeProvider(ChromeTestDir);
+        Instance.ClearInstallLocation();
+        Assert::DoesNotThrow(() => Instance.DownloadLatestVersion("linux64"));
     });
 
     Tester.EndTests();

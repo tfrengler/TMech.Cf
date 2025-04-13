@@ -77,7 +77,7 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
      * Deletes all files and folders in the install location (though it regenerates the temp-subfolder).
      */
     public void function ClearInstallLocation() {
-        var InstallLocationDirs = directoryList(path=variables.InstallLocation, recurse=true, listInfo="all", type="dir");
+        var InstallLocationDirs = directoryList(path=variables.InstallLocation, recurse=false, listInfo="all", type="dir");
 
         for(var currentDir in InstallLocationDirs) {
             directoryDelete(currentDir, true);
@@ -161,7 +161,7 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
             fileDelete(TempFile);
         }
 
-        fileWrite("#variables.InstallLocation#/#variables.FilePath#", DownloadData[1].ReadableVersion);
+        fileWrite("#variables.InstallLocation#/#variables.VersionFileName#", DownloadData[1].Version);
         return true;
     }
 
