@@ -29,7 +29,7 @@
             }
         }
 
-        application.isJavaObject = (required any object) => {
+        application.isJavaObject = (required any object, string name = "") => {
             if (isNull(arguments.object)) return false;
 
             if (
@@ -42,6 +42,25 @@
             var baseClassName = getMetadata(arguments.object).getClass().getName();
 
             if (baseClassName is "java.lang.Class") {
+                return true;
+            }
+
+            return false;
+        }
+
+        application.isSpecificJavaObject = (required any object, required string name) => {
+            if (isNull(arguments.object)) return false;
+
+            if (
+                isSimpleValue(arguments.object) is true ||
+                isArray(arguments.object) is true
+            ) {
+                return false;
+            }
+
+            var metadata = getMetadata(arguments.object);
+
+            if (metadata.getClass().getName() is "java.lang.Class" && metadata.getClass().name is arguments.name) {
                 return true;
             }
 

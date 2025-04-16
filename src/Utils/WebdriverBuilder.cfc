@@ -7,7 +7,7 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
     property name="IsRemote"         type="boolean" getter="false" setter="false";
     property name="IsHeadless"       type="boolean" getter="false" setter="false";
     property name="IsFullscreen"     type="boolean" getter="false" setter="false";
-    property name="WindowSize"       type="struct" getter="false" setter="false"; // x | y
+    property name="WindowSize"       type="Models.Dimension" getter="false" setter="false";
     property name="DriverService"    type="any" getter="false" setter="false"; // org.openqa.selenium.remote.service.DriverService
     property name="BrowserBinary"    type="string" getter="false" setter="false";
     property name="DownloadFolder"   type="string" getter="false" setter="false";
@@ -20,12 +20,14 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
             throw("Argument 'browser' is required but was empty");
         }
 
-        variables.IsRemote = false;
+        variables.IsRemote = arguments.remoteServerUrl.len() > 0;
         variables.IsHeadless = false;
         variables.IsFullscreen = false;
-        variables.WindowSize = {x: 0, y: 0};
+        variables.WindowSize = Models.Dimension::None();
+        variables.DriverService = nullValue();
         variables.BrowserBinary = "";
         variables.DownloadFolder = "";
+        variables.BrowserArguments = [];
 
         variables.Browser = arguments.browser;
         variables.RemoteServerUrl = arguments.remoteServerUrl;
@@ -33,10 +35,18 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
         return this;
     }
 
+    /**
+     * Creates a webdriver to run a browser that is located on the same machine this code is executed. Note that running is local mode is always headless.
+     */
     public static WebdriverBuilder function CreateLocal(required string browser) {
         return new WebdriverBuilder(arguments.browser);
     }
 
+    /**
+     * Creates a webdriver to run a browser that is usually located somewhere else than on the machine where this code is executing (typically a Selenium Grid server).
+     *
+     * @remoteServerUrl The url of the remote server. Note that you can also start your webdriver binary locally and pass in the localhost:port to run it locally.
+     */
     public static WebdriverBuilder function CreateRemote(required string browser, required string remoteServerUrl) {
         if (arguments.remoteServerUrl.len() == 0) {
             throw("Argument 'remoteServerUrl' is required but was empty");
@@ -68,7 +78,7 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
             throw("Argument width or height is equal to or less than 0 (x: #arguments.width# | y: #arguments.height#)");
         }
 
-        variables.WindowSize = {x: arguments.width, y: arguments.height};
+        variables.WindowSize = new Models.Dimension(arguments.width, arguments.height);
         return this;
     }
 
@@ -81,7 +91,7 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
     public WebdriverBuilder function UsingDriverService(required any service) {
         ThrowOnLocalOnly();
 
-        if (application.isJavaObject(arguments.service)) {
+        if (!application.isJavaObject(arguments.service)) {
             throw("Expected argument 'service' to be an instance of 'org.openqa.selenium.remote.service.DriverService'");
         }
 
@@ -113,18 +123,21 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
 
     // Final
 
-    public Models.WebdriverContext function Initialize() {
-        return new WebdriverContext(
-            variables.IsRemote,
-            variables.IsHeadless,
-            variables.IsFullscreen,
-            variables.WindowSize,
-            variables.DriverService,
-            variables.BrowserBinary,
-            variables.DownloadFolder,
-            variables.Browser,
-            variables.RemoteServerUrl,
-            variables.BrowserArguments
+    public Services.WebdriverContext function Initialize() {
+
+        // writeDump(variables);
+
+        return new Services.WebdriverContext(
+            isRemote = variables.IsRemote,
+            isHeadless = variables.IsHeadless,
+            isFullscreen = variables.IsFullscreen,
+            windowSize = variables.WindowSize,
+            driverService = variables.DriverService,
+            browserBinary = variables.BrowserBinary,
+            downloadFolder = variables.DownloadFolder,
+            browser = variables.Browser,
+            remoteServerUrl = variables.RemoteServerUrl,
+            browserArguments = variables.BrowserArguments
         );
     }
 }

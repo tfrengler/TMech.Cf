@@ -78,6 +78,11 @@ component displayname="Selenium" modifier="final" output="false" accessors="fals
         return createObject("java", "org.openqa.selenium.Dimension", variables.Jars).init(width, height);
     }
 
+    public any function OutputType_Bytes()
+    {
+        return createObject("java", "org.openqa.selenium.OutputType", variables.Jars).BYTES;
+    }
+
     public any function GetHandle(required string javaObject) {
         return createObject("java", arguments.javaObject, variables.Jars);
     }
