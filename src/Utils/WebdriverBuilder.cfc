@@ -55,9 +55,9 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
     }
 
     private void function ThrowOnLocalOnly() {
-        if (variables.IsRemote) {
-            throw("This method can only be called on a builder used to create a local webdriver");
-        }
+        // if (variables.IsRemote) {
+        //     throw("This method can only be called on a builder used to create a local webdriver");
+        // }
     }
 
     // Remote and local

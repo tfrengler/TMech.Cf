@@ -17,7 +17,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
     property name="BrowserArguments"    type="array" getter="false" setter="false";
 
     // PRIVATE
-    property name="Selenium"        type="string" getter="false" setter="false";
+    property name="Selenium"        type="Utils.Selenium" getter="false" setter="false";
     property name="Webdriver"       type="any" getter="false" setter="false";
     /* The above is a Java-object. If IsRemote = false then it is one of these (depending on Browser):
         - org.openqa.selenium.chrome.ChromeDriver
@@ -73,16 +73,14 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
 
         // writeDump(variables);
 
-        // Create options
-        // var options = CreateOptions(
-        //     arguments.browser,
-        //     arguments.isHeadless,
-        //     arguments.browserArguments,
-        //     arguments.downloadFolder
-        // );
-        var options = variables.Selenium.ChromeOptions().init();
+        var options = CreateOptions(
+            arguments.browser,
+            arguments.isHeadless,
+            arguments.browserArguments,
+            arguments.downloadFolder
+        );
 
-        if (variables.IsRemote == true) {
+        if (variables.IsRemote === true) {
 
             if (arguments.RemoteServerUrl.len() == 0) {
                 throw("Expected argument 'RemoteServerUrl' to not be empty when argument 'IsRemote' is true");
@@ -93,6 +91,8 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
                 .addAlternative(options)
                 .address(arguments.RemoteServerUrl)
                 .build();
+
+            variables.Webdriver.setFileDetector(variables.Selenium.LocalFileDetector().init());
         }
         else {
             if (arguments.BrowserBinary.len() > 0) {
@@ -157,64 +157,51 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
         required array browserArguments,
         required string downloadFolder
     ) {
-        var returnData = 0;
+        var returnData = nullValue();
+        var isChromiumBased = false;
 
         switch (arguments.browser) {
             case "CHROME":
-                var chromeOptions = variables.Selenium.ChromeOptions().init();
-                var preferences = {
-                    "safebrowsing.enabled": "false",
-                    "download.prompt_for_download": false
-                }
-
-                if (arguments.downloadFolder.len() > 0)
-                {
-                    preferences["download.directory_upgrade"] = true;
-                    preferences["download.default_directory"] = arguments.downloadFolder;
-                }
-
-                chromeOptions.setExperimentalOption("prefs", preferences);
-
-                if (arguments.IsHeadless is true)
-                {
-                    chromeOptions.addArguments("--headless=new");
-                }
-
-                returnData = chromeOptions;
-                break;
-            case "FIREFOX":
-                var firefoxOptions = variables.Selenium.FirefoxOptions().init();
-                var firefoxProfile = variables.Selenium.GetHandle("org.openqa.selenium.firefox.FirefoxProfile");
-
-                firefoxOptions.setProfile(firefoxProfile());
-
-                returnData = firefoxOptions;
+                returnData = variables.Selenium.ChromeOptions().init();
+                isChromiumBased = true;
                 break;
             case "EDGE":
-                var edgeOptions = variables.Selenium.EdgeOptions().init();
-                edgeOptions.setExperimentalOption("safebrowsing.enabled", "false");
-                edgeOptions.setExperimentalOption("download.prompt_for_download", false);
-
-                if (arguments.downloadFolder.len() > 0)
-                {
-                    edgeOptions.setExperimentalOption("download.directory_upgrade", true);
-                    edgeOptions.setExperimentalOption("download.default_directory", arguments.downloadFolder);
-                }
-
-                if (arguments.IsHeadless)
-                {
-                    edgeOptions.addArguments("--headless=new");
-                }
-
-                returnData = edgeOptions;
+                returnData = variables.Selenium.EdgeOptions().init();
+                isChromiumBased = true;
+                break;
+            case "FIREFOX":
+                var returnData = variables.Selenium.FirefoxOptions().init();
+                var firefoxProfile = variables.Selenium.GetHandle("org.openqa.selenium.firefox.FirefoxProfile").init();
+                returnData.setProfile(firefoxProfile);
                 break;
             default:
-                throw("Invalid browser option: #arguments.browser#");
+                // This should only happen if the dev did a booboo
+                throw("INTERNAL ERROR - Invalid browser option: #arguments.browser#");
+        }
+
+        if (isChromiumBased) {
+            var preferences = {
+                "safebrowsing.enabled": "false",
+                "download.prompt_for_download": false
+            }
+
+            if (arguments.downloadFolder.len() > 0)
+            {
+                preferences["download.directory_upgrade"] = true;
+                preferences["download.default_directory"] = arguments.downloadFolder;
+            }
+
+            returnData.setExperimentalOption("prefs", preferences);
+
+            if (arguments.IsHeadless)
+            {
+                returnData.addArguments("--headless=new");
+            }
         }
 
         if (arguments.browserArguments.len() > 0)
         {
-            chromeOptions.addArguments(arguments.browserArguments);
+            returnData.addArguments(arguments.browserArguments);
         }
 
         var proxy = variables.Selenium.Proxy().init();
@@ -225,7 +212,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
         return returnData;
     }
 
-    public any function GetHandle()
+    public any function Driver()
     {
         return variables.Webdriver;
     }

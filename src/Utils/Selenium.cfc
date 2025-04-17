@@ -78,11 +78,15 @@ component displayname="Selenium" modifier="final" output="false" accessors="fals
         return createObject("java", "org.openqa.selenium.Dimension", variables.Jars).init(width, height);
     }
 
-    public any function OutputType_Bytes()
-    {
-        return createObject("java", "org.openqa.selenium.OutputType", variables.Jars).BYTES;
+    public any function LocalFileDetector() {
+        return createObject("java", "org.openqa.selenium.remote.LocalFileDetector", variables.Jars);
     }
 
+    /**
+     * Returns a handle to a Java-object from the Selenium-packages. Returns an uninitialized handle that you must call init() on yourself.
+     *
+     * @javaObject The full name of the java-object to create a handle for.
+     */
     public any function GetHandle(required string javaObject) {
         return createObject("java", arguments.javaObject, variables.Jars);
     }
