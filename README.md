@@ -11,11 +11,43 @@ Almost everything is covered by functional regression/unit tests so that I can b
 
 It consists of these bits:
 1. ChromeProvider
-1. WebdriverContext
+1. WebdriverContext and WebdriverBuilder
 ## 1: ChromeProvider
 
 Tools that can auto-download the latest stable **Chrome for Testing** version for you. This were created so that we could automatically keep a local browser (and its webdriver binary) up to date for testing against. It's cross-platform and works on Win and Linux (only for 64-bit).
 
-## 3: WebdriverContext
+## 3: WebdriverContext and WebdriverBuilder
 
-WIP
+The WebdriverContext is a wrapper around the underlying Java-webdriver and contains the logic for starting a browser.
+Since starting a browser can be somewhat complex there's the accompanying WebdriverBuilder which features a fluent API
+for setting up a webdriver instance.
+
+Examples:
+
+```cfc
+// Starting Chrome locally (runs headless)
+
+context = Utils.WebdriverBuilder::CreateLocal("CHROME")
+            .ThatRunsHeadless()
+            .WithWindowSize(1920, 1080)
+            .Initialize();
+
+// Starting Chrome in GUI-mode (useful for development and debugging)
+// First start the webdriver binary manually on your machine (might run on http://localhost:56774)
+
+context = Utils.WebdriverBuilder::CreateRemote("CHROME", "http://localhost:56774")
+            .ThatRunsFullScreen()
+            .Initialize();
+
+
+// Start using. Navigate to some page
+context.Driver().get("https://www.somewebsite.com/");
+
+// Make sure you shutdown cleanly or you will have lingering browser/webdriver processes
+
+context.onDestroy();
+// or
+context.Driver().quit();
+
+//The former is safer and should not throw unless 'context' itself is null or invalid
+```

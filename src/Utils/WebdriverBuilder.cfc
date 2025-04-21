@@ -36,7 +36,7 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
     }
 
     /**
-     * Creates a webdriver to run a browser that is located on the same machine this code is executed. Note that running is local mode is always headless.
+     * Creates a webdriver to run a browser that is located on the same machine this code is executed. Note that running in local mode is always headless.
      */
     public static WebdriverBuilder function CreateLocal(required string browser) {
         return new WebdriverBuilder(arguments.browser);
@@ -45,7 +45,7 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
     /**
      * Creates a webdriver to run a browser that is usually located somewhere else than on the machine where this code is executing (typically a Selenium Grid server).
      *
-     * @remoteServerUrl The url of the remote server. Note that you can also start your webdriver binary locally and pass in the localhost:port to run it locally.
+     * @remoteServerUrl The url of the remote server. Note that it is also possible to start the webdriver binary on this machine and pass in the localhost:port to run it locally.
      */
     public static WebdriverBuilder function CreateRemote(required string browser, required string remoteServerUrl) {
         if (arguments.remoteServerUrl.len() == 0) {
@@ -54,24 +54,34 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
         return new WebdriverBuilder(arguments.browser, arguments.remoteServerUrl);
     }
 
-    private void function ThrowOnLocalOnly() {
-        // if (variables.IsRemote) {
-        //     throw("This method can only be called on a builder used to create a local webdriver");
-        // }
-    }
-
     // Remote and local
 
+    /**
+     * Starts the browser in headless mode (no UI). Note that browsers started via CreateLocal() are always headless!
+     * This has several advantages:
+     * it saves resources
+     * allows you to emulate higher resolutions than the max screensize of the target machine
+     * allows it to run on shell-only servers
+     */
     public WebdriverBuilder function ThatRunsHeadless() {
         variables.IsHeadless = true;
         return this;
     }
 
+    /**
+     * Makes the browser window as big as the screensize of the target machine.
+     * Note that this has no effect in headless mode. In that case you have to set screensize specifically.
+     */
     public WebdriverBuilder function ThatRunsFullScreen() {
         variables.IsFullscreen = true;
         return this;
     }
 
+    /**
+     * Resizes the browser window to a specific size. Useful for emulating devices of different screensizes.
+     * If ThatRunsHeadless() has been called and this has not then the window size defaults to 1920x1080.
+     * In all other cases it is non-deterministic what size the browser window ends up being and depends on the vendor.
+     */
     public WebdriverBuilder function WithWindowSize(required numeric width, required numeric height) {
 
         if (arguments.width <= 0 || arguments.height <= 0) {
@@ -82,15 +92,22 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
         return this;
     }
 
+    /**
+     * Passes an array of command-line arguments to the browser upon startup.
+     */
     public WebdriverBuilder function WithBrowserArguments(required array arguments) {
         variables.BrowserArguments = arguments.arguments;
         return this;
     }
 
     // Local only
-    public WebdriverBuilder function UsingDriverService(required any service) {
-        ThrowOnLocalOnly();
 
+    /**
+     * Uses the driver service you pass to manage the underlying webdriver binary. This is normally done internally by Selenium and is not required.
+     * Expected to be a Java-object that derives from org.openqa.selenium.remote.service.DriverService.
+     * Only relevant for webdrivers not running against a remote server.
+     */
+    public WebdriverBuilder function UsingDriverService(required any service) {
         if (!application.isJavaObject(arguments.service)) {
             throw("Expected argument 'service' to be an instance of 'org.openqa.selenium.remote.service.DriverService'");
         }
@@ -99,9 +116,12 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
         return this;
     }
 
+    /**
+     * Redirects Selenium to use another browser binary than the standard one (gotten from the PATH).
+     * Useful if you have a specific browser configured for testing installed (such as 'Chrome for Testing').
+     * Only relevant for webdrivers not running against a remote server.
+     */
     public WebdriverBuilder function WithBrowserBinaryLocatedAt(required string absolutePathToExecutable) {
-        ThrowOnLocalOnly();
-
         if (!fileExists(arguments.absolutePathToExecutable)) {
             throw("The file in argument 'absolutePathToExecutable' does not exist: #arguments.absolutePathToExecutable#");
         }
@@ -110,9 +130,11 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
         return this;
     }
 
+    /**
+     * Redirects the download-folder of the browser to a specific location. Only works for Chromium-based browsers.
+     * Only relevant for webdrivers not running against a remote server.
+     */
     public WebdriverBuilder function WithDownloadFolderLocatedAt(required string absolutePathToFolder) {
-        ThrowOnLocalOnly();
-
         if (!directoryExists(arguments.absolutePathToFolder)) {
             throw("The folder in argument 'absolutePathToFolder' does not exist: #arguments.absolutePathToFolder#");
         }
@@ -123,10 +145,10 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
 
     // Final
 
+    /**
+     * Initializes the webdriver which starts the browser.
+     */
     public Services.WebdriverContext function Initialize() {
-
-        // writeDump(variables);
-
         return new Services.WebdriverContext(
             isRemote = variables.IsRemote,
             isHeadless = variables.IsHeadless,

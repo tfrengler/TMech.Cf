@@ -29,17 +29,6 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
     /**
      * Although the WebdriverContext can be instantiated directly it is highly recommended to do so via the WebdriverBuilder instead.
      * Many of these arguments are conditionally mandatory or optional depending on what is passed.
-     *
-     * @isRemote            Whether the webdriver is to be used locally (on executing machine) or run against a remote driver (on a Selenium Grid)
-     * @isHeadless          Whether to launch the webdriver with or without a GUI. Without a GUI uses less resources and allows the webdriver to be run on shell-only servers.
-     * @isFullscreen        Whether the browser window should be maximized to use the entire screen. Only relevant when 'isHeadless' is false and mutually exclusive with 'windowSize'. Takes precedence if true.
-     * @windowSize          What size the browser window should have. Mutually exclusive with 'isFullscreen'. Defaults to 1920x1080 if equal to Dimension::None.
-     * @driverService       An instance of a driverservice to manage the lifetime of the vendor specific driver-binary. Optional. Can be passed as null.
-     * @browserBinary       The absolute path to the binary of the browser. Optional. If not passed then Selenium will attempt to find the browser via the enviroment variables.
-     * @downloadFolder      An absolute path to the folder where any downloaded files should be stored. Optional. Will default to the browser's default location. Note that this does not work for Firefox.
-     * @browser             The browser to start. This can be any of "CHROME", "FIREFOX" or "EDGE".
-     * @remoteServerUrl     The address of the remote Selenium Grid server. If 'IsRemote' is true then this is required.
-     * @browserArguments    Additional command line arguments to send to the browser upon startup. Optional.
      */
     public WebdriverContext function Init(
         required boolean isRemote,
@@ -95,8 +84,8 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
             variables.Webdriver.setFileDetector(variables.Selenium.LocalFileDetector().init());
         }
         else {
-            if (arguments.BrowserBinary.len() > 0) {
-                options.setBinary(arguments.BrowserBinary);
+            if (variables.BrowserBinary.len() > 0) {
+                options.setBinary(variables.BrowserBinary);
             }
 
             var WebdriverHandle = null;
@@ -115,7 +104,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
                     throw("Invalid browser string: #arguments.Browser#");
             }
 
-            if (!isNull(variables.DriverService)) {
+            if (isNull(variables.DriverService) === false) {
                 variables.Webdriver = WebdriverHandle.init(variables.DriverService, options);
             }
             else {
@@ -126,16 +115,19 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
         // Firefox and Chrome likes to throw exceptions (no execution context) if you try and interact with it too quickly after the driver has been started...
         sleep(2000);
 
-        if (arguments.isFullscreen)
+        if (variables.isFullscreen === true)
         {
             Webdriver.manage().window().maximize();
         }
-        else
+        else if (variables.IsHeadless === true)
         {
             var WindowSize = 0;
 
-            if (arguments.WindowSize.IsValid()) {
-                WindowSize = variables.Selenium.Dimension(arguments.WindowSize.getX(), arguments.WindowSize.getY());
+            if (variables.WindowSize.IsValid()) {
+                WindowSize = variables.Selenium.Dimension(
+                    variables.WindowSize.getX(),
+                    variables.WindowSize.getY()
+                );
             }
             else {
                 WindowSize = variables.Selenium.Dimension(1920, 1080);
@@ -151,16 +143,11 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
         return this;
     }
 
-    private static any function CreateOptions(
-        required string browser,
-        required boolean isHeadless,
-        required array browserArguments,
-        required string downloadFolder
-    ) {
+    private any function CreateOptions() {
         var returnData = nullValue();
         var isChromiumBased = false;
 
-        switch (arguments.browser) {
+        switch (variables.browser) {
             case "CHROME":
                 returnData = variables.Selenium.ChromeOptions().init();
                 isChromiumBased = true;
@@ -176,7 +163,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
                 break;
             default:
                 // This should only happen if the dev did a booboo
-                throw("INTERNAL ERROR - Invalid browser option: #arguments.browser#");
+                throw("INTERNAL ERROR - Invalid browser option: #variables.Browser#");
         }
 
         if (isChromiumBased) {
@@ -185,23 +172,23 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
                 "download.prompt_for_download": false
             }
 
-            if (arguments.downloadFolder.len() > 0)
+            if (variables.DownloadFolder.len() > 0)
             {
                 preferences["download.directory_upgrade"] = true;
-                preferences["download.default_directory"] = arguments.downloadFolder;
+                preferences["download.default_directory"] = variables.DownloadFolder;
             }
 
             returnData.setExperimentalOption("prefs", preferences);
 
-            if (arguments.IsHeadless)
+            if (variables.IsHeadless)
             {
-                returnData.addArguments("--headless=new");
+                returnData.addArguments(["--headless=new"]);
             }
         }
 
-        if (arguments.browserArguments.len() > 0)
+        if (variables.browserArguments.len() > 0)
         {
-            returnData.addArguments(arguments.browserArguments);
+            returnData.addArguments(variables.browserArguments);
         }
 
         var proxy = variables.Selenium.Proxy().init();
@@ -212,6 +199,9 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
         return returnData;
     }
 
+    /**
+     * Returns the underlying Java webdriver instance.
+     */
     public any function Driver()
     {
         return variables.Webdriver;
