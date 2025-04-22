@@ -9,27 +9,39 @@ Almost everything is covered by functional regression/unit tests so that I can b
 
 ## CONTENTS:
 
-It consists of these bits:
+This library currently consists of these parts:
 1. ChromeProvider
 1. WebdriverContext and WebdriverBuilder
 ## 1: ChromeProvider
 
 Tools that can auto-download the latest stable **Chrome for Testing** version for you. This were created so that we could automatically keep a local browser (and its webdriver binary) up to date for testing against. It's cross-platform and works on Win and Linux (only for 64-bit).
 
-## 3: WebdriverContext and WebdriverBuilder
+## 2: WebdriverContext and WebdriverBuilder
 
 The WebdriverContext is a wrapper around the underlying Java-webdriver and contains the logic for starting a browser.
 Since starting a browser can be somewhat complex there's the accompanying WebdriverBuilder which features a fluent API
 for setting up a webdriver instance.
 
-Examples:
+### Installation:
+
+Before you get started you need Selenium. Go to the website (https://www.selenium.dev/downloads/) and download the Java-bindings.
+Unzip the contents into a folder called **SeleniumLibs** inside the root folder (where Application.cfc lives).
+A singleton instance of **Selenium.cfc** will be instantiated on application startup and put in the **application**-scope.
+
+*EXAMPLES:*
 
 ```cfc
-// Starting Chrome locally (runs headless)
+// Starting Chrome locally (local drivers are implicitly headless)
 
 context = Utils.WebdriverBuilder::CreateLocal("CHROME")
-            .ThatRunsHeadless()
             .WithWindowSize(1920, 1080)
+            .Initialize();
+
+// Using 'Chrome for Testing' locally using explicit binary location
+
+context = Utils.WebdriverBuilder::CreateLocal("CHROME")
+            .WithWindowSize(1920, 1080)
+            .WithBrowserBinaryLocatedAt("C:\chrome-for-testing\chrome.exe")
             .Initialize();
 
 // Starting Chrome in GUI-mode (useful for development and debugging)
@@ -39,9 +51,19 @@ context = Utils.WebdriverBuilder::CreateRemote("CHROME", "http://localhost:56774
             .ThatRunsFullScreen()
             .Initialize();
 
+// Starting Chrome on a remote Selenium Grid server in headless mode with a standard desktop resolution
 
-// Start using. Navigate to some page
+context = Utils.WebdriverBuilder::CreateRemote("CHROME", "http://my-selenium-grid-server:12345")
+            .ThatRunsHeadless(new Models.Dimension(1920, 1080))
+            .Initialize();
+
+// Start using Selenium via the Java-webdriver (navigate to some page)
 context.Driver().get("https://www.somewebsite.com/");
+
+// Fetch element and click it
+selenium = handle_to_selenium_component;
+element = context.Driver().findElement(selenium.By().cssSelector("#IdOfSomeElement"));
+element.click();
 
 // Make sure you shutdown cleanly or you will have lingering browser/webdriver processes
 

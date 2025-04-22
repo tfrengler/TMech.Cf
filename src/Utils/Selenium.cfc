@@ -3,17 +3,17 @@
  */
 component displayname="Selenium" modifier="final" output="false" accessors="false" persistent="true" {
 
-    property name="Jars" type="array" getter="false" setter="false" default="";
+    property name="Jars" type="array" getter="false" setter="false";
 
     public Selenium function Init(required string pathToSeleniumJarFolder ) {
 
-        if(!directoryExists(arguments.pathToSeleniumJarFolder))
+        if(directoryExists(arguments.pathToSeleniumJarFolder) === false)
         {
             throw("Error instantiating Selenium-component. The folder in 'pathToSeleniumJarFolder' does not exist: " & arguments.pathToSeleniumJarFolder);
         }
 
         var SeleniumJars = directoryList(pathToSeleniumJarFolder, false, "path", "*.jar");
-        if (SeleniumJars.len() == 0)
+        if (SeleniumJars.len() === 0)
         {
             throw("Error instantiating Selenium-component. The folder in parameter 'pathToSeleniumJarFolder' exist but appears to be empty (expected jar-files): " & arguments.pathToSeleniumJarFolder);
         }
@@ -28,9 +28,21 @@ component displayname="Selenium" modifier="final" output="false" accessors="fals
     }
 
     // Enums, interfaces and static classes go here
-    property name="ProxyType"               type="any" getter="true" setter="false";
-    property name="By"                      type="any" getter="true" setter="false";
-    property name="ScreenshotOutputType"    type="any" getter="true" setter="false";
+    property name="ProxyType"               type="any" getter="false" setter="false";
+    property name="By"                      type="any" getter="false" setter="false";
+    property name="ScreenshotOutputType"    type="any" getter="false" setter="false";
+
+    public any function ProxyType() {
+        return variables.ProxyType;
+    }
+
+    public any function By() {
+        return variables.By;
+    }
+
+    public any function ScreenshotOutputType() {
+        return variables.ScreenshotOutputType;
+    }
 
     // Functions return standard classes but they are just references and the caller has to call init() on them.
     // The exceptions are classes with a single constructor. If the single constructor requires arguments then they are implemented by the functions here.

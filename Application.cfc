@@ -80,14 +80,13 @@
 
         <cfif structKeyExists(URL, "Reset") >
             <cfset onSessionEnd(session, application) />
-            <cflocation url=#listFirst(cgi.REQUEST_URL, "?")# />
         </cfif>
 
         <!--- For testing purposes, this nukes the session and restarts the application --->
         <cfif structKeyExists(URL, "Restart") >
             <cfset onSessionEnd(session, application) />
             <cfset applicationStop() />
-            <cflocation url=#listFirst(cgi.REQUEST_URL, "?")# />
+            <cflocation addtoken="false" url=#reReplace(CGI.script_name, "^/+", "", "all")# />
         </cfif>
 
         <cfreturn true />

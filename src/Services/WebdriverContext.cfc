@@ -7,7 +7,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
     // PUBLIC
     property name="IsRemote"            type="boolean" getter="false" setter="false";
     property name="IsHeadless"          type="boolean" getter="false" setter="false";
-    property name="IsFullscreen"        type="boolean" getter="false" setter="false";
+    property name="IsMaximized"        type="boolean" getter="false" setter="false";
     property name="WindowSize"          type="Dimension" getter="false" setter="false";
     property name="DriverService"       type="any" getter="false" setter="false"; // org.openqa.selenium.remote.service.DriverService
     property name="BrowserBinary"       type="string" getter="false" setter="false";
@@ -33,14 +33,14 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
     public WebdriverContext function Init(
         required boolean isRemote,
         required boolean isHeadless,
-        required boolean isFullscreen,
+        required boolean isMaximized,
         required Dimension windowSize,
         required any driverService,
         required string browserBinary,
         required string downloadFolder,
         required string browser,
         required string remoteServerUrl,
-        required array browserArguments)
+        required array browserArguments) output = false
     {
 
         if (!IsValidBrowser(browser)) {
@@ -51,7 +51,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
 
         variables.IsRemote = arguments.isRemote;
         variables.IsHeadless = arguments.isHeadless;
-        variables.IsFullscreen = arguments.isFullscreen;
+        variables.IsMaximized = arguments.isMaximized;
         variables.WindowSize = arguments.windowSize;
         variables.DriverService = arguments.driverService;
         variables.BrowserBinary = arguments.browserBinary;
@@ -60,14 +60,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
         variables.RemoteServerUrl = arguments.remoteServerUrl;
         variables.BrowserArguments = arguments.browserArguments;
 
-        // writeDump(variables);
-
-        var options = CreateOptions(
-            arguments.browser,
-            arguments.isHeadless,
-            arguments.browserArguments,
-            arguments.downloadFolder
-        );
+        var options = CreateOptions();
 
         if (variables.IsRemote === true) {
 
@@ -80,7 +73,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
                 .addAlternative(options)
                 .address(arguments.RemoteServerUrl)
                 .build();
-
+            // Required for you to be able to upload local files to the remote server via the browser
             variables.Webdriver.setFileDetector(variables.Selenium.LocalFileDetector().init());
         }
         else {
@@ -115,25 +108,18 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
         // Firefox and Chrome likes to throw exceptions (no execution context) if you try and interact with it too quickly after the driver has been started...
         sleep(2000);
 
-        if (variables.isFullscreen === true)
+        if (variables.isMaximized === true)
         {
             Webdriver.manage().window().maximize();
         }
-        else if (variables.IsHeadless === true)
+        else if (variables.WindowSize.IsValid())
         {
-            var WindowSize = 0;
-
-            if (variables.WindowSize.IsValid()) {
-                WindowSize = variables.Selenium.Dimension(
+            Webdriver.manage().window().setSize(
+                variables.Selenium.Dimension(
                     variables.WindowSize.getX(),
                     variables.WindowSize.getY()
-                );
-            }
-            else {
-                WindowSize = variables.Selenium.Dimension(1920, 1080);
-            }
-
-            Webdriver.manage().window().setSize(WindowSize);
+                )
+            );
         }
 
         Webdriver.manage().timeouts().pageLoadTimeout(
@@ -143,7 +129,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
         return this;
     }
 
-    private any function CreateOptions() {
+    private any function CreateOptions() output = false {
         var returnData = nullValue();
         var isChromiumBased = false;
 
@@ -158,6 +144,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
                 break;
             case "FIREFOX":
                 var returnData = variables.Selenium.FirefoxOptions().init();
+                returnData.addArguments("--headless");
                 var firefoxProfile = variables.Selenium.GetHandle("org.openqa.selenium.firefox.FirefoxProfile").init();
                 returnData.setProfile(firefoxProfile);
                 break;
@@ -180,7 +167,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
 
             returnData.setExperimentalOption("prefs", preferences);
 
-            if (variables.IsHeadless)
+            if (variables.isHeadless)
             {
                 returnData.addArguments(["--headless=new"]);
             }
@@ -193,7 +180,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
 
         var proxy = variables.Selenium.Proxy().init();
         proxy.setAutodetect(false);
-        proxy.setProxyType(variables.Selenium.GetProxyType().DIRECT)
+        proxy.setProxyType(variables.Selenium.ProxyType().DIRECT)
         returnData.setProxy(proxy);
 
         return returnData;
@@ -202,15 +189,14 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
     /**
      * Returns the underlying Java webdriver instance.
      */
-    public any function Driver()
-    {
+    public any function Driver() output = false {
         return variables.Webdriver;
     }
 
     /**
      * Destructor. Called when the component goes out of scope or is garbage collected
      */
-    public void function onDestroy() {
+    public void function onDestroy() output = false {
         try {
             variables.Webdriver.quit();
         }
@@ -219,9 +205,13 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
 
     /* STATIC FUNCTIONS */
 
-    public static string function GetValidBrowsers() { return "CHROME,FIREFOX,EDGE"; }
+    public static string function GetValidBrowsers() output = false
+    {
+        return "CHROME,FIREFOX,EDGE";
+    }
 
-    public static boolean function IsValidBrowser(required string browser) {
+    public static boolean function IsValidBrowser(required string browser) output = false
+    {
         return listFind(GetValidBrowsers(), arguments.browser) != 0;
     }
 }
