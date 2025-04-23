@@ -7,6 +7,8 @@ The project is provided here in public **as-is**. It is open-source but not open
 
 Almost everything is covered by functional regression/unit tests so that I can be (reasonably) sure that nothing I change or fix will break stuff. Most of these tests are quite technically involved since they require a local install of all supported browsers and their webdriver binaries, as well as a Selenium Grid server. I try to automate as much as I can but some things (particularly all the variations of starting a WebdriverContext) are better off being manually tested.
 
+All the tests live in the *tests*-subfolder which you can safely ignore/delete.
+
 ## CONTENTS:
 
 This library currently consists of these parts:
