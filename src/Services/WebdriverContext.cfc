@@ -7,9 +7,9 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
     // PUBLIC
     property name="IsRemote"            type="boolean" getter="false" setter="false";
     property name="IsHeadless"          type="boolean" getter="false" setter="false";
-    property name="IsMaximized"        type="boolean" getter="false" setter="false";
+    property name="IsMaximized"         type="boolean" getter="false" setter="false";
     property name="WindowSize"          type="Dimension" getter="false" setter="false";
-    property name="DriverService"       type="any" getter="false" setter="false"; // org.openqa.selenium.remote.service.DriverService
+    property name="DriverService"       type="org.openqa.selenium.remote.service.DriverService" getter="false" setter="false";
     property name="BrowserBinary"       type="string" getter="false" setter="false";
     property name="DownloadFolder"      type="string" getter="false" setter="false";
     property name="Browser"             type="string" getter="false" setter="false";
@@ -17,13 +17,14 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
     property name="BrowserArguments"    type="array" getter="false" setter="false";
 
     // PRIVATE
-    property name="Selenium"        type="Utils.Selenium" getter="false" setter="false";
-    property name="Webdriver"       type="any" getter="false" setter="false";
+    property name="Selenium"            type="Utils.Selenium" getter="false" setter="false";
+    property name="Webdriver"           type="org.openqa.selenium.remote.RemoteWebDriver" getter="false" setter="false";
     /* The above is a Java-object. If IsRemote = false then it is one of these (depending on Browser):
         - org.openqa.selenium.chrome.ChromeDriver
         - org.openqa.selenium.firefox.FirefoxDriver
         - org.openqa.selenium.edge.EdgeDriver
     * If IsRemote = true then it is: org.openqa.selenium.remote.RemoteWebDriver
+    * NOTE: RemoteWebdriver is the base class for the local, vendor specific vendors.
     */
 
     /**
@@ -62,7 +63,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
 
         var options = CreateOptions();
 
-        if (variables.IsRemote === true) {
+        if (variables.IsRemote == true) {
 
             if (arguments.RemoteServerUrl.len() == 0) {
                 throw("Expected argument 'RemoteServerUrl' to not be empty when argument 'IsRemote' is true");
@@ -97,7 +98,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
                     throw("Invalid browser string: #arguments.Browser#");
             }
 
-            if (isNull(variables.DriverService) === false) {
+            if (isNull(variables.DriverService) == false) {
                 variables.Webdriver = WebdriverHandle.init(variables.DriverService, options);
             }
             else {
@@ -108,7 +109,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
         // Firefox and Chrome likes to throw exceptions (no execution context) if you try and interact with it too quickly after the driver has been started...
         sleep(2000);
 
-        if (variables.isMaximized === true)
+        if (variables.isMaximized == true)
         {
             Webdriver.manage().window().maximize();
         }
@@ -163,6 +164,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
             {
                 preferences["download.directory_upgrade"] = true;
                 preferences["download.default_directory"] = variables.DownloadFolder;
+                preferences["savefile.default_directory"] = variables.DownloadFolder;
             }
 
             returnData.setExperimentalOption("prefs", preferences);
@@ -194,7 +196,7 @@ component displayname="WebdriverContext" modifier="final" output="false" accesso
     }
 
     /**
-     * Destructor. Called when the component goes out of scope or is garbage collected
+     * Destructor. Called when the component goes out of scope (ie. if stored in the session or application).
      */
     public void function onDestroy() output = false {
         try {

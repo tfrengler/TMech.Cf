@@ -8,8 +8,8 @@ component displayname="Dimension" modifier="final" output="false" accessors="fal
 
     public Dimension function Init(required numeric x, required numeric y) output = false
     {
-        variables.X = arguments.X;
-        variables.Y = arguments.Y;
+        variables.X = arguments.x;
+        variables.Y = arguments.y;
 
         return this;
     }
@@ -20,6 +20,11 @@ component displayname="Dimension" modifier="final" output="false" accessors="fal
     public boolean function IsValid() output = false
     {
         return variables.X > 0 && variables.Y > 0;
+    }
+
+    public string function ToString() output = false
+    {
+        return "[ X = #variables.X# | Y = #variables.Y# ]"
     }
 
     /**

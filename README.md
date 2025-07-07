@@ -26,9 +26,8 @@ The WebdriverContext is a wrapper around the underlying Java-webdriver and conta
 
 Before you get started you need Selenium. Go to the website (https://www.selenium.dev/downloads/) and download the Java-bindings.
 Unzip the contents into a folder called **SeleniumLibs** inside the root folder (where Application.cfc lives).
-A singleton instance of **Selenium.cfc** will be instantiated on application startup and put in the **application**-scope.
 
-I know that some people will balk at code reaching into the application-scope (particularly CFC's) but in this case I feel it is justified since the entire purpose of this library (and the scope of the application) is centered around Selenium.
+If you chose to use the **Application.cfc** included then a singleton instance of **Selenium.cfc** will be instantiated on application startup and put in the **application**-scope. Otherwise you will have to manage its lifetime yourself.
 
 *EXAMPLES:*
 

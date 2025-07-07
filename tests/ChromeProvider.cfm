@@ -13,9 +13,20 @@
 </head>
 <body>
 
+<cfoutput>
+    <cfif !structKeyExists(FORM, "doTest") >
+        <form action="ChromeProvider.cfm" method="POST">
+            <input name="doTest" type="hidden" value="true" />
+            <button type="submit">EXECUTE TESTS</button>
+            <cfabort/>
+        </form>
+    </cfif>
+</cfoutput>
+
 <cfscript>
     Tester = new UnitTester("ChromeProvider.cfc");
-    ChromeTestDir = "C:\Dev\tools\chrome_test";
+    ChromeTestDir = "C:\Dev\temp\chrome_test";
+    Assert::DirExists(ChromeTestDir);
 
     Tester.BeginTests("Init");
 
