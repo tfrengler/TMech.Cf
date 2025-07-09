@@ -1,3 +1,6 @@
+/**
+ * @hint A tool for downloading and maintaining a local copy of 'Chrome for Testing'
+ */
 component displayname="ChromeProvider" modifier="final" output="false" accessors="false" persistent="true"
 {
     // PUBLIC
@@ -19,7 +22,7 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
     }
 
     /**
-     * Constructor
+     * @hint Constructor
      * @installLocation The absolute path to the folder where to download and extract Chrome and its driver. Must exist, and be readable.
      */
     public ChromeProvider function Init(required string installLocation) output = false {
@@ -40,7 +43,7 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
     }
 
     /**
-     * Returns the version that is currently installed or an empty string if there's no version installed (or the version file is empty or cannot be found).
+     * @hint Returns the version that is currently installed or an empty string if there's no version installed (or the version file is empty or cannot be found).
      */
     public string function GetCurrentInstalledVersion() output = false {
         var FilePath = "#variables.InstallLocation#/#variables.VersionFileName#";
@@ -52,14 +55,14 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
     }
 
     /**
-     *  Returns the latest stable version of Chrome that is available online.
+     *  @hint Returns the latest stable version of Chrome that is available online.
      */
     public string function GetLatestAvailableVersion(required string platform) output = false {
         return getBinaryAssetData(arguments.platform)[1].Version;
     }
 
     /**
-     * Returns a list (string) of all platforms this service supports.
+     * @hint Returns a list (string) of all platforms this service supports.
      */
     public string function GetSupportedPlatforms() output = false {
         // Note: these values literally match keys in the manifest JSON so DO NOT change!
@@ -67,14 +70,14 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
     }
 
     /**
-     * Checks whether a given platform-string matches a platform this service supports.
+     * @hint Checks whether a given platform-string matches a platform this service supports.
      */
     public boolean function IsSupportedPlatform(required string platform) output = false {
         return listFind(GetSupportedPlatforms(), arguments.platform) != 0;
     }
 
     /**
-     * Deletes all files and folders in the install location (though it regenerates the temp-subfolder).
+     * @hint Deletes all files and folders in the install location (though it regenerates the temp-subfolder).
      */
     public void function ClearInstallLocation() output = false {
         var InstallLocationDirs = directoryList(path=variables.InstallLocation, recurse=false, listInfo="all", type="dir");
@@ -92,7 +95,7 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
     }
 
     /**
-     * Downloads and extracts Chrome and its webdriver (their versions always match each other) into the install location if the currently installed version is lower than the latest available version or if Chrome is not installed.</para>
+     * @hint Downloads and extracts 'Chrome for Testing' and its webdriver (their versions always match each other) into the install location if the currently installed version is lower than the latest available version or if Chrome is not installed.</para>
      * NOTE: If there is already a version of Chrome in the install location it will not be removed first! Existing files will merely be overwritten. This might leave certain version-specific files behind.
      *
      * @platform The platform to download Chrome and its driver for.
@@ -168,7 +171,7 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
     // PRIVATE METHODS
 
     /**
-     * Returns an array where index 1 is the browser data, and index 2 is the driver data
+     * @hint Returns an array where index 1 is the browser data, and index 2 is the driver data
      */
     private array function getBinaryAssetData(required string platform) output = false {
 

@@ -5,9 +5,9 @@ What is this? Well, it's a boostrapping/utility library built around Selenium fo
 The project is provided here in public **as-is**. It is open-source but not open-contribution. Patches, feature- and change requests are not accepted. If there are bugs I will try to fix them when my time allows.
 ## TESTS:
 
-Almost everything is covered by functional regression/unit tests so that I can be (reasonably) sure that nothing I change or fix will break stuff. Most of these tests are quite technically involved since they require a local install of all supported browsers and their webdriver binaries, as well as a Selenium Grid server. I try to automate as much as I can but some things (particularly all the variations of starting a WebdriverContext) are better off being manually tested.
+Almost everything is covered by functional/regression tests so that I can be (reasonably) sure that nothing I change or fix will break stuff. Most of these tests are quite technically involved since they require a local install of all supported browsers and their webdriver binaries, as well as a Selenium Grid server. I try to automate as much as I can but some things (particularly all the variations of starting a WebdriverContext) are better off being manually tested.
 
-All the tests live in the *tests*-subfolder which you can safely ignore/delete.
+*NOTE*: All the tests live in the *tests*-subfolder which you can safely ignore/delete.
 
 ## CONTENTS:
 
@@ -18,6 +18,22 @@ This library currently consists of these parts:
 
 A tool that can auto-download the latest stable **Chrome for Testing** version for you. Useful for automatically keeping a local browser (and its webdriver binary) up to date for testing against. It's cross-platform and works on Win and Linux (only for 64-bit).
 
+*EXAMPLES:*
+
+```cfc
+
+provider = new ChromeProvider('path-to-desired-folder');
+
+// Download latest version
+
+wasDownloaded = provider.DownloadLatestVersion("win64");
+writeDump("Was Chrome updated? #wasDownloaded#");
+
+// Check the latest version available online
+
+writeDump("Latest version: #provider.GetLatestAvailableVersion()#");
+```
+
 ## 2: WebdriverContext and WebdriverBuilder
 
 The WebdriverContext is a wrapper around the underlying Java-webdriver and contains the logic for starting a browser. Since starting a browser can be somewhat complex there's the accompanying WebdriverBuilder which features a fluent API for setting up a webdriver instance.
@@ -25,13 +41,20 @@ The WebdriverContext is a wrapper around the underlying Java-webdriver and conta
 ### Installation:
 
 Before you get started you need Selenium. Go to the website (https://www.selenium.dev/downloads/) and download the Java-bindings.
-Unzip the contents into a folder called **SeleniumLibs** inside the root folder (where Application.cfc lives).
 
-If you chose to use the **Application.cfc** included then a singleton instance of **Selenium.cfc** will be instantiated on application startup and put in the **application**-scope. Otherwise you will have to manage its lifetime yourself.
+If you chose to use the **Application.cfc** included then a singleton instance of **Selenium.cfc** will be instantiated on application startup and put in the **application**-scope. Unzip the contents of the Java-bindings into a folder called **SeleniumLibs** inside the root folder (where Application.cfc lives).
+
+If you chose to use your own setup then you will have to manage the lifetime of **Selenium.cfc** yourself. It expects the folder where the Java-bindings live in its constructor.
 
 *EXAMPLES:*
 
 ```cfc
+// Assuming you are managing Selenium yourself and extracted the Java-binding to C:\SeleniumJavaBindings\
+selenium = new Utils.Selenium("C:\SeleniumJavaBindings\");
+
+// Register Selenium-bindings globally. All WebdriverBuilder-instances will use instance this going forward
+Utils.WebdriverBuilder::RegisterSelenium(selenium);
+
 // Starting Chrome locally (local drivers are implicitly headless)
 
 context = Utils.WebdriverBuilder::CreateLocal("CHROME")
@@ -46,7 +69,7 @@ context = Utils.WebdriverBuilder::CreateLocal("CHROME")
             .Initialize();
 
 // Starting Chrome in GUI-mode (useful for development and debugging)
-// First start the webdriver binary manually on your machine (might run on http://localhost:56774)
+// First start the webdriver binary manually on your machine (might run on http://localhost:56774, port is randomized)
 
 context = Utils.WebdriverBuilder::CreateRemote("CHROME", "http://localhost:56774")
             .ThatRunsFullScreen()

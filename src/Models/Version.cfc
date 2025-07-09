@@ -1,5 +1,5 @@
 /**
- * Component representing a version in the form a major and minor revision number.
+ * @hint Component representing a version in the form a major and minor revision number.
  * An instance can be created via the constructor or parsed from a string using FromString().
  * Contains methods for comparing two instances to determine whether they are greater than, lesser than or equal to each other.
  */
@@ -29,9 +29,12 @@ component displayname="Version" modifier="final" output="false" accessors="false
 
     /* STATIC METHODS */
 
-    // 1  = x is greater than y
-    // 0  = x and y are equal
-    // -1 = y is greater than x
+    /**
+     * @hint Compares two instances against each other and returns a number indicating their similarity:
+     * 1  = x is greater than y
+     * 0  = x and y are equal
+     * -1 = y is greater than x
+     */
     public static numeric function Compare(required Version x, required Version y) {
 
         var xMajor = x.getMajor();
@@ -46,7 +49,7 @@ component displayname="Version" modifier="final" output="false" accessors="false
     }
 
     /**
-     * Parses a version string (dot-delimited list of numbers) into a Version-instance.
+     * @hint Parses a version string (dot-delimited list of numbers) into a Version-instance.
      *
      * @input The string to parse into a Version-instance. If empty (or the string is malformed) then a Version-instance with 0 as minor and major revision is returned.
      */

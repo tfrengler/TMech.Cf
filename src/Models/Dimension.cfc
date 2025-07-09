@@ -1,11 +1,17 @@
 /**
- * Represents a dimension in arbitrary space with a numerical X and Y component.
+ * @hint Represents a dimension in arbitrary space with a numerical X and Y component.
  */
 component displayname="Dimension" modifier="final" output="false" accessors="false" persistent="true"
 {
     property name="X" type="numeric" getter="true" setter="false";
     property name="Y" type="numeric" getter="true" setter="false";
 
+    /**
+     * @hint Constructor.
+     *
+     * @x The width of the dimension. Can be 0 or below but this will result in IsValid() returning false.
+     * @y The height of the dimension. Can be 0 or below but this will result in IsValid() returning false.
+     */
     public Dimension function Init(required numeric x, required numeric y) output = false
     {
         variables.X = arguments.x;
@@ -15,7 +21,7 @@ component displayname="Dimension" modifier="final" output="false" accessors="fal
     }
 
     /**
-     * Returns true if X and Y are above 0 and false otherwise.
+     * @hint Returns true if X and Y are above 0 and false otherwise.
      */
     public boolean function IsValid() output = false
     {
@@ -28,7 +34,7 @@ component displayname="Dimension" modifier="final" output="false" accessors="fal
     }
 
     /**
-     * Represents the non-existent dimension where X and Y are 0.
+     * @hint Represents the non-existent dimension where X and Y are 0.
      */
     public static Dimension function None() output = false
     {

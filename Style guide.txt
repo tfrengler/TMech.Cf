@@ -14,6 +14,9 @@ component displayname="x" modifier="final" output="false" accessors="false" pers
     // PRIVATE
     property name="xxx" type="string" getter="false" setter="false";
 
+    /**
+    * @hint Constructor
+    * /
     public x function Init() output = false {
         return this;
     }
