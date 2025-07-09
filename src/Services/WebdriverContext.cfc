@@ -1,8 +1,8 @@
 /**
- * Component that represents the context of a Selenium webdriver (the class that represents and 'drives' the browser interaction).
+ * @hint Component that represents the context of a Selenium webdriver (the class that represents and 'drives' the browser interaction).
  * Contains the logic for managing the lifetime of a webdriver along with its state and configuration.
  */
-component displayname="WebdriverContext" modifier="final" output="false" accessors="false" persistent="true" {
+component displayname="WebdriverContext" output="false" accessors="false" persistent="true" {
 
     // PUBLIC
     property name="IsRemote"            type="boolean" getter="false" setter="false";

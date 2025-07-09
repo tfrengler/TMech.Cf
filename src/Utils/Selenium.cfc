@@ -28,12 +28,13 @@ component displayname="Selenium" modifier="final" output="false" accessors="fals
     }
 
     /**
-     * @hint Tests whether an object is a Java-object and optionally is derived from or a specific Java-object.
+     * @hint Tests whether an object is a Java-object and optionally whether it is derived from - or is a specific - Java-object.
      *
      * @object          The object to test.
      * @javaClassName   Optional. The name of the Java-class you expect arguments.object to be.
+     * @includeDerived  Optional. Determines whether javaClassName should match any derived classes as well or just the concrete class of the object itself.
      */
-    public static boolean function isJavaObject(required any object, string javaClassName = "") output = true
+    public static boolean function isJavaObject(required any object, string javaClassName = "", boolean includeDerived = true) output = true
     {
         if (isNull(arguments.object)) return false;
 
@@ -63,6 +64,10 @@ component displayname="Selenium" modifier="final" output="false" accessors="fals
         while(true) {
             if (actualClassName == arguments.javaClassName) {
                 return true;
+            }
+
+            if (!arguments.includeDerived) {
+                break;
             }
 
             currentJavaClass = currentJavaClass.getSuperClass();
