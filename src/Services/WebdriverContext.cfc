@@ -28,10 +28,12 @@ component displayname="WebdriverContext" output="false" accessors="false" persis
     */
 
     /**
-     * Although the WebdriverContext can be instantiated directly it is highly recommended to do so via the WebdriverBuilder instead.
+     * @hint Constructor.
+     * NOTE: Although the WebdriverContext can be instantiated directly it is highly recommended to do so via the WebdriverBuilder instead.
      * Many of these arguments are conditionally mandatory or optional depending on what is passed.
      */
     public WebdriverContext function Init(
+        required Utils.Selenium selenium,
         required boolean isRemote,
         required boolean isHeadless,
         required boolean isMaximized,
@@ -48,7 +50,7 @@ component displayname="WebdriverContext" output="false" accessors="false" persis
             throw("Error instantiating WebdriverContext. Argument 'browser' is invalid: #arguments.browser#. Valid values are #GetValidBrowsers()#");
         }
 
-        variables.Selenium = application.Selenium;
+        variables.Selenium = arguments.Selenium;
 
         variables.IsRemote = arguments.isRemote;
         variables.IsHeadless = arguments.isHeadless;
@@ -189,14 +191,14 @@ component displayname="WebdriverContext" output="false" accessors="false" persis
     }
 
     /**
-     * Returns the underlying Java webdriver instance.
+     * @hint Returns the underlying Java webdriver instance.
      */
     public any function Driver() output = false {
         return variables.Webdriver;
     }
 
     /**
-     * Destructor. Called when the component goes out of scope (ie. if stored in the session or application).
+     * @hint Destructor. Call this when the component goes out of scope to ensure any lingering browser processes are shut down.
      */
     public void function onDestroy() output = false {
         try {
