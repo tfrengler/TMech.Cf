@@ -23,51 +23,7 @@
 
     <cffunction name="onApplicationStart" returnType="boolean" output="false">
     <cfscript>
-        application.assert = (required bool condition, string message = "") => {
-            if (!condition) {
-                throw("ERROR: Assertion failed! #message#");
-            }
-        }
-
-        application.isJavaObject = (required any object, string name = "") => {
-            if (isNull(arguments.object)) return false;
-
-            if (
-                isSimpleValue(arguments.object) is true ||
-                isArray(arguments.object) is true
-            ) {
-                return false;
-            }
-
-            var baseClassName = getMetadata(arguments.object).getClass().getName();
-
-            if (baseClassName is "java.lang.Class") {
-                return true;
-            }
-
-            return false;
-        }
-
-        application.isSpecificJavaObject = (required any object, required string name) => {
-            if (isNull(arguments.object)) return false;
-
-            if (
-                isSimpleValue(arguments.object) is true ||
-                isArray(arguments.object) is true
-            ) {
-                return false;
-            }
-
-            var metadata = getMetadata(arguments.object);
-
-            if (metadata.getClass().getName() is "java.lang.Class" && metadata.getClass().name is arguments.name) {
-                return true;
-            }
-
-            return false;
-        }
-
-        application.Selenium = new src.Utils.Selenium(this.appRoot & "SeleniumLibs");
+        application.Selenium = new Utils.Selenium(this.appRoot & "SeleniumLibs");
 
         return true;
     </cfscript>
@@ -77,17 +33,6 @@
         <cfargument type="string" name="targetPage" required="true" />
         <!--- Otherwise the webserver might buffer the proxied response from Lucee and cfflush won't emit anything--->
         <cfheader name="X-Accel-Buffering" value="no" />
-
-        <cfif structKeyExists(URL, "Reset") >
-            <cfset onSessionEnd(session, application) />
-        </cfif>
-
-        <!--- For testing purposes, this nukes the session and restarts the application --->
-        <cfif structKeyExists(URL, "Restart") >
-            <cfset onSessionEnd(session, application) />
-            <cfset applicationStop() />
-            <cflocation addtoken="false" url=#reReplace(CGI.script_name, "^/+", "", "all")# />
-        </cfif>
 
         <cfreturn true />
     </cffunction>

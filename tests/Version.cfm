@@ -13,6 +13,16 @@
 </head>
 <body>
 
+<cfoutput>
+    <cfif !structKeyExists(FORM, "doTest") >
+        <form action="Version.cfm" method="POST">
+            <input name="doTest" type="hidden" value="true" />
+            <button type="submit">EXECUTE TESTS</button>
+            <cfabort/>
+        </form>
+    </cfif>
+</cfoutput>
+
 <cfscript>
     Tester = new UnitTester("Version.cfc");
 

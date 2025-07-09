@@ -11,7 +11,7 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
     property name="TempDir"         type="string" getter="false" setter="false";
 
     // CUSTOM SETTERS
-    public void function SetRequestTimeout(required numeric timeout) {
+    public void function SetRequestTimeout(required numeric timeout) output = false {
         if (timeout < 1) {
             variables.RequestTimeout = 30;
         }
@@ -22,7 +22,7 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
      * Constructor
      * @installLocation The absolute path to the folder where to download and extract Chrome and its driver. Must exist, and be readable.
      */
-    public ChromeProvider function Init(required string installLocation) {
+    public ChromeProvider function Init(required string installLocation) output = false {
 
         if (!directoryExists(arguments.installLocation)) {
             throw("Error instantiating ChromeProvider. Argument 'installLocation' does not point to a directory that exists: #arguments.installLocation#", "TMech.Cf.NoSuchDir");
@@ -42,7 +42,7 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
     /**
      * Returns the version that is currently installed or an empty string if there's no version installed (or the version file is empty or cannot be found).
      */
-    public string function GetCurrentInstalledVersion() {
+    public string function GetCurrentInstalledVersion() output = false {
         var FilePath = "#variables.InstallLocation#/#variables.VersionFileName#";
         if (!fileExists(FilePath)) {
             return "";
@@ -54,14 +54,14 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
     /**
      *  Returns the latest stable version of Chrome that is available online.
      */
-    public string function GetLatestAvailableVersion(required string platform) {
+    public string function GetLatestAvailableVersion(required string platform) output = false {
         return getBinaryAssetData(arguments.platform)[1].Version;
     }
 
     /**
      * Returns a list (string) of all platforms this service supports.
      */
-    public string function GetSupportedPlatforms() {
+    public string function GetSupportedPlatforms() output = false {
         // Note: these values literally match keys in the manifest JSON so DO NOT change!
         return "win64,linux64"
     }
@@ -69,14 +69,14 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
     /**
      * Checks whether a given platform-string matches a platform this service supports.
      */
-    public boolean function IsSupportedPlatform(required string platform) {
+    public boolean function IsSupportedPlatform(required string platform) output = false {
         return listFind(GetSupportedPlatforms(), arguments.platform) != 0;
     }
 
     /**
      * Deletes all files and folders in the install location (though it regenerates the temp-subfolder).
      */
-    public void function ClearInstallLocation() {
+    public void function ClearInstallLocation() output = false {
         var InstallLocationDirs = directoryList(path=variables.InstallLocation, recurse=false, listInfo="all", type="dir");
 
         for(var currentDir in InstallLocationDirs) {
@@ -100,7 +100,7 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
      * @force Optional. Whether to force Chrome to be downloaded and installed even if the installed version is already the newest.
      * @retuns True if the browser and/or driver was download, false otherwise.
      */
-    public boolean function DownloadLatestVersion(required string platform, boolean skipDriver = false, boolean force = false) {
+    public boolean function DownloadLatestVersion(required string platform, boolean skipDriver = false, boolean force = false) output = false {
 
         var DownloadData = getBinaryAssetData(arguments.platform);
         var MaxIndex = arguments.skipDriver ? 2 : 3;
@@ -170,7 +170,7 @@ component displayname="ChromeProvider" modifier="final" output="false" accessors
     /**
      * Returns an array where index 1 is the browser data, and index 2 is the driver data
      */
-    private array function getBinaryAssetData(required string platform) {
+    private array function getBinaryAssetData(required string platform) output = false {
 
         if (!IsSupportedPlatform(arguments.platform)) {
             throw("Not a valid platform: #arguments.platform#. Supported platforms are #GetSupportedPlatforms()#");

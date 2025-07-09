@@ -4,16 +4,16 @@
 component displayname="WebdriverBuilder" modifier="final" output="false" accessors="false" persistent="true"
 {
     // PRIVATE
-    property name="IsRemote"         type="boolean" getter="false" setter="false";
-    property name="IsHeadless"       type="boolean" getter="false" setter="false";
-    property name="IsMaximized"     type="boolean" getter="false" setter="false";
-    property name="WindowSize"       type="Models.Dimension" getter="false" setter="false";
-    property name="DriverService"    type="any" getter="false" setter="false"; // org.openqa.selenium.remote.service.DriverService
-    property name="BrowserBinary"    type="string" getter="false" setter="false";
-    property name="DownloadFolder"   type="string" getter="false" setter="false";
-    property name="Browser"          type="string" getter="false" setter="false";
-    property name="RemoteServerUrl"  type="string" getter="false" setter="false";
-    property name="BrowserArguments" type="array" getter="false" setter="false";
+    property name="IsRemote"         type="boolean"             getter="true" setter="false";
+    property name="IsHeadless"       type="boolean"             getter="true" setter="false";
+    property name="IsMaximized"      type="boolean"             getter="true" setter="false";
+    property name="WindowSize"       type="Models.Dimension"    getter="true" setter="false";
+    property name="DriverService"    type="any"                 getter="true" setter="false"; // org.openqa.selenium.remote.service.DriverService
+    property name="BrowserBinary"    type="string"              getter="true" setter="false";
+    property name="DownloadFolder"   type="string"              getter="true" setter="false";
+    property name="Browser"          type="string"              getter="true" setter="false";
+    property name="RemoteServerUrl"  type="string"              getter="true" setter="false";
+    property name="BrowserArguments" type="array"               getter="true" setter="false";
 
     private WebdriverBuilder function Init(required string browser, string remoteServerUrl = "") output = false {
         if (arguments.browser.len() == 0) {
@@ -70,11 +70,11 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
      */
     public WebdriverBuilder function ThatRunsHeadless(Models.Dimension windowSize) output = false {
 
-        if (structKeyExists(arguments, "windowSize") === false) {
+        if (structKeyExists(arguments, "windowSize") == false) {
             variables.WindowSize = new Models.Dimension(1920,1080);
         }
         else {
-            if (arguments.windowSize.IsValid() === false) {
+            if (arguments.windowSize.IsValid() == false) {
                 throw("Argument 'windowSize' is invalid (x: #arguments.windowSize.getX()# | y: #arguments.windowSize.getY()#");
             }
             variables.WindowSize = arguments.windowSize;
@@ -103,8 +103,8 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
      */
     public WebdriverBuilder function WithWindowSize(required numeric width, required numeric height) output = false {
 
-        var windowSize = new Models.Dimension(arguments.height, arguments.width);
-        if (windowSize.IsValid() === false) {
+        var windowSize = new Models.Dimension(arguments.width, arguments.height);
+        if (windowSize.IsValid() == false) {
             throw("Argument 'width' and/or 'height' is invalid (x: #arguments.width# | y: #arguments.height#)");
         }
 
@@ -128,8 +128,8 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
      * Only relevant for webdrivers not running against a remote server.
      */
     public WebdriverBuilder function UsingDriverService(required any service) output = false {
-        if (!application.isJavaObject(arguments.service)) {
-            throw("Expected argument 'service' to be an instance of 'org.openqa.selenium.remote.service.DriverService'");
+        if (!Selenium::IsJavaObject(arguments.service, "org.openqa.selenium.remote.service.DriverService")) {
+            throw("Expected argument 'service' to be a Java-object (sub-class of 'org.openqa.selenium.remote.service.DriverService')");
         }
 
         variables.DriverService = arguments.service;
@@ -162,6 +162,21 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
 
         variables.DownloadFolder = arguments.absolutePathToFolder;
         return this;
+    }
+
+    public string function ToString() output = false {
+        return "{
+            IsRemote            = #variables.IsRemote# |
+            IsHeadless          = #variables.IsHeadless# |
+            IsMaximized         = #variables.IsMaximized# |
+            WindowSize          = #variables.WindowSize.ToString()# |
+            DriverService       = #variables.DriverService# |
+            BrowserBinary       = #variables.BrowserBinary# |
+            DownloadFolder      = #variables.DownloadFolder# |
+            Browser             = #variables.Browser# |
+            RemoteServerUrl     = #variables.RemoteServerUrl# |
+            BrowserArguments    = [ #ArrayToList(variables.BrowserArguments, ",")# ]
+        }";
     }
 
     // Final

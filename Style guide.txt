@@ -22,7 +22,6 @@ component displayname="x" modifier="final" output="false" accessors="false" pers
 CFC variables/properties:
 - Use cfproperty for ALL instance variables with the following baseline convention:
     property name="xxx" type="string" getter="true" setter="false";
-- For properties if type is a Java-object then use "any" and add a comment above or behind to indicate it is a Java-object
 - For properties setter=false by default so that variables cannot be mutated from outside UNLESS that is desired
 - To access properties from outside the cfc use getXXX()
 - For properties just rely on setter=true to auto-generate the setter for you if mutation is allowed
