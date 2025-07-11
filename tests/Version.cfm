@@ -24,7 +24,7 @@
 </cfoutput>
 
 <cfscript>
-    Tester = new UnitTester("Version.cfc");
+    Tester = new TestRunner("Version.cfc");
 
     Tester.BeginTests("Init");
 

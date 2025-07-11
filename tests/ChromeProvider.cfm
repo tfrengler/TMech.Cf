@@ -24,7 +24,7 @@
 </cfoutput>
 
 <cfscript>
-    Tester = new UnitTester("ChromeProvider.cfc");
+    Tester = new TestRunner("ChromeProvider.cfc");
     ChromeTestDir = "C:\Dev\temp\chrome_test";
     Assert::DirExists(ChromeTestDir);
 

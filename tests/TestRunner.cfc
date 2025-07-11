@@ -1,7 +1,7 @@
 /**
- * Quick and dirty helper component to facilitate unit testing.
+ * @hint Quick and dirty helper component to facilitate functional testing.
  */
-component displayname="UnitTester" modifier="final" output="true" accessors="false" persistent="true"
+component displayname="TestRunner" modifier="final" output="true" accessors="false" persistent="true"
 {
     // PUBLIC
     property name="SuiteName"                   type="string" getter="true" setter="false";
@@ -10,7 +10,7 @@ component displayname="UnitTester" modifier="final" output="true" accessors="fal
     property name="Failures"                    type="array" getter="false" setter="false";
     property name="Start"                       type="numeric" getter="false" setter="false";
 
-    public UnitTester function Init(required string suiteName, boolean stopImmediatelyOnFailure = false) {
+    public TestRunner function Init(required string suiteName, boolean stopImmediatelyOnFailure = false) {
         variables.StopImmediatelyOnFailure = arguments.stopImmediatelyOnFailure;
         variables.Failures = [];
         variables.Start = 0;
@@ -30,6 +30,7 @@ component displayname="UnitTester" modifier="final" output="true" accessors="fal
         var Start = getTickCount();
         try {
             arguments.testLambda();
+            writeOutput("<h4 style='display:block;background-color:green;color:white'>OK: #arguments.name# (#getTickCount() - Start# ms)</h4>");
         }
         catch(error) {
             var StackTrace = arrayLast(callStackGet("array"));
@@ -44,12 +45,14 @@ component displayname="UnitTester" modifier="final" output="true" accessors="fal
                 throw("Aborting the rest of the test run");
             }
         }
+        cfflush();
     }
 
     public void function EndTests() {
         Finalize();
         writeOutput("</fieldset>");
         arrayClear(variables.Failures);
+        cfflush();
     }
 
     // PRIVATE
@@ -72,7 +75,7 @@ component displayname="UnitTester" modifier="final" output="true" accessors="fal
         }
         else {
             var TimeTaken = getTickCount() - variables.Start;
-            writeOutput("<h3 style='display:inline-block;background-color:green;color:white'>All passed! (#TimeTaken# ms)</h3>")
+            writeOutput("<h3 style='display:inline-block;background-color:green;color:white'>All passed! (#TimeTaken# ms)</h3>");
         }
     }
 }

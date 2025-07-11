@@ -15,6 +15,22 @@ component displayname="StringValue" modifier="final" output="false" accessors="f
         return new StringValue(true);
     }
 
+    private void function ThrowHelper(required string message, required string expected, required string actual) output = false {
+        throw(
+            message = arguments.message,
+            detail = "
+                EXPECTED
+                ----Length: #len(arguments.expected)#
+                ----Value: #arguments.expected#
+
+                ACTUAL
+                ----Length: #len(arguments.actual)#
+                ----Value: #arguments.actual#"
+            ,
+            type = Assert::GetAssertionType()
+        );
+    }
+
     public StringConstraint function Nothing() output = false {
 
         var predicate = (required string value) => {
@@ -24,18 +40,18 @@ component displayname="StringValue" modifier="final" output="false" accessors="f
             }
 
             if (variables.discriminator == true && isNull(arguments.value)) {
-                throw("Expected string to not be nothing but it is null", Assert::GetAssertionType());
+                throw("Expected a string to not be null, empty or consist entirely of whitespace but it is null", Assert::GetAssertionType());
             }
 
             var stringIsEmpty = trim(arguments.value).len() == 0;
 
             if (stringIsEmpty && variables.discriminator == true) {
-                throw("Expected string to not be nothing but it is empty or consists entirely of whitespace", Assert::GetAssertionType());
+                throw("Expected a string to have a value but it is empty or consists entirely of whitespace", Assert::GetAssertionType());
             }
 
             if (!stringIsEmpty && variables.discriminator == false) {
                 throw(
-                    "Expected string to be nothing but it has a value with length #arguments.value.len()#: #arguments.value#",
+                    "Expected string to be null, empty or consist entirely of whitespace but it has a length of #arguments.value.len()# and a value of: #arguments.value#",
                     Assert::GetAssertionType()
                 );
             }
@@ -49,9 +65,9 @@ component displayname="StringValue" modifier="final" output="false" accessors="f
         var outerArgs = arguments;
         var predicate = (required string value) => {
 
-            if (variables.discriminator == true && isNull(arguments.value)) {
+            if (variables.discriminator == false && isNull(arguments.value)) {
                 throw(
-                    "Expected string to equal another string but it is null:#newLine()#Expected: #arguments.value#",
+                    "Expected a string to equal another string in value but it is null",
                     Assert::GetAssertionType()
                 );
             }
@@ -59,22 +75,18 @@ component displayname="StringValue" modifier="final" output="false" accessors="f
             var valuesAreEqual = outerArgs.expectedValue == arguments.value;
 
             if (!valuesAreEqual && variables.discriminator == false) {
-                throw(
-                    "Expected string to equal another string but they differ:
-                    #newLine()#Expected (length: #len(outerArgs.expectedValue)#): #outerArgs.expectedValue#
-                    #newLine()#Actual (length: #len(arguments.value)#): #arguments.value#"
-                    ,
-                    Assert::GetAssertionType()
+                ThrowHelper(
+                    "Expected a string to equal another string in value but they differ",
+                    outerArgs.expectedValue,
+                    arguments.value
                 );
             }
 
             if (valuesAreEqual && variables.discriminator == true) {
-                throw(
-                    "Expected string to not equal another string:
-                    #newLine()#Expected (length: #len(outerArgs.expectedValue)#): #outerArgs.expectedValue#
-                    #newLine()#Actual (length: #len(arguments.value)#): #arguments.value#"
-                    ,
-                    Assert::GetAssertionType()
+                ThrowHelper(
+                    "Expected a string to not equal another string in value but they appear to be the same",
+                    outerArgs.expectedValue,
+                    arguments.value
                 );
             }
         };
@@ -87,9 +99,9 @@ component displayname="StringValue" modifier="final" output="false" accessors="f
         var outerArgs = arguments;
         var predicate = (required string value) => {
 
-            if (variables.discriminator == true && isNull(arguments.value)) {
+            if (variables.discriminator == false && isNull(arguments.value)) {
                 throw(
-                    "Expected string to contain another string but it is null:#newLine()#Expected: #arguments.value#",
+                    "Expected a string to contain a certain value but it is null",
                     Assert::GetAssertionType()
                 );
             }
@@ -97,22 +109,18 @@ component displayname="StringValue" modifier="final" output="false" accessors="f
             var valueContainsExpected = find(outerArgs.expectedValue, arguments.value, 0) > 0;
 
             if (!valueContainsExpected && variables.discriminator == false) {
-                throw(
-                    "Expected string to contain another string but it does not:
-                    #newLine()#Expected (length: #len(outerArgs.expectedValue)#): #outerArgs.expectedValue#
-                    #newLine()#Actual (length: #len(arguments.value)#): #arguments.value#"
-                    ,
-                    Assert::GetAssertionType()
+                ThrowHelper(
+                    "Expected a string to contain a certain value but it does not",
+                    outerArgs.expectedValue,
+                    arguments.value
                 );
             }
 
             if (valueContainsExpected && variables.discriminator == true) {
-                throw(
-                    "Expected string to not contain another string:
-                    #newLine()#Expected (length: #len(outerArgs.expectedValue)#): #outerArgs.expectedValue#
-                    #newLine()#Actual (length: #len(arguments.value)#): #arguments.value#"
-                    ,
-                    Assert::GetAssertionType()
+                ThrowHelper(
+                    "Expected a string to not contain a certain value but it does",
+                    outerArgs.expectedValue,
+                    arguments.value
                 );
             }
         };
@@ -125,9 +133,9 @@ component displayname="StringValue" modifier="final" output="false" accessors="f
         var outerArgs = arguments;
         var predicate = (required string value) => {
 
-            if (variables.discriminator == true && isNull(arguments.value)) {
+            if (variables.discriminator == false && isNull(arguments.value)) {
                 throw(
-                    "Expected string to start with another string but it is null:#newLine()#Expected: #arguments.value#",
+                    "Expected a string to start with a certain value but it is null",
                     Assert::GetAssertionType()
                 );
             }
@@ -135,22 +143,18 @@ component displayname="StringValue" modifier="final" output="false" accessors="f
             var valueStartsWithExpected = find(outerArgs.expectedValue, arguments.value, 0) == 1;
 
             if (!valueStartsWithExpected && variables.discriminator == false) {
-                throw(
-                    "Expected string to start with another string but it does not:
-                    #newLine()#Expected (length: #len(outerArgs.expectedValue)#): #outerArgs.expectedValue#
-                    #newLine()#Actual (length: #len(arguments.value)#): #arguments.value#"
-                    ,
-                    Assert::GetAssertionType()
+                ThrowHelper(
+                    "Expected a string to start with a certain value but it does not",
+                    outerArgs.expectedValue,
+                    arguments.value
                 );
             }
 
             if (valueStartsWithExpected && variables.discriminator == true) {
-                throw(
-                    "Expected string to not start with another string:
-                    #newLine()#Expected (length: #len(outerArgs.expectedValue)#): #outerArgs.expectedValue#
-                    #newLine()#Actual (length: #len(arguments.value)#): #arguments.value#"
-                    ,
-                    Assert::GetAssertionType()
+                ThrowHelper(
+                    "Expected a string to not start with a certain value but it does",
+                    outerArgs.expectedValue,
+                    arguments.value
                 );
             }
         };
@@ -163,9 +167,9 @@ component displayname="StringValue" modifier="final" output="false" accessors="f
         var outerArgs = arguments;
         var predicate = (required string value) => {
 
-            if (variables.discriminator == true && isNull(arguments.value)) {
+            if (variables.discriminator == false && isNull(arguments.value)) {
                 throw(
-                    "Expected string to end with another string but it is null:#newLine()#Expected: #arguments.value#",
+                    "Expected a string to end with a certain value but it is null",
                     Assert::GetAssertionType()
                 );
             }
@@ -173,22 +177,52 @@ component displayname="StringValue" modifier="final" output="false" accessors="f
             var valueEndsWithExpected = right(arguments.value, len(outerArgs.expectedValue)) == outerArgs.expectedValue;
 
             if (!valueEndsWithExpected && variables.discriminator == false) {
-                throw(
-                    "Expected string to end with another string but it does not:
-                    #newLine()#Expected (length: #len(outerArgs.expectedValue)#): #outerArgs.expectedValue#
-                    #newLine()#Actual (length: #len(arguments.value)#): #arguments.value#"
-                    ,
-                    Assert::GetAssertionType()
+                ThrowHelper(
+                    "Expected a string to end with a certain value but it does not",
+                    outerArgs.expectedValue,
+                    arguments.value
                 );
             }
 
             if (valueEndsWithExpected && variables.discriminator == true) {
+                ThrowHelper(
+                    "Expected a string to not end with a certain value but it does",
+                    outerArgs.expectedValue,
+                    arguments.value
+                );
+            }
+        };
+
+        return new StringConstraint(predicate);
+    }
+
+    public StringConstraint function Matching(required string expectedValue) output = false {
+
+        var outerArgs = arguments;
+        var predicate = (required string value) => {
+
+            if (variables.discriminator == false && isNull(arguments.value)) {
                 throw(
-                    "Expected string to not end with another string:
-                    #newLine()#Expected (length: #len(outerArgs.expectedValue)#): #outerArgs.expectedValue#
-                    #newLine()#Actual (length: #len(arguments.value)#): #arguments.value#"
-                    ,
+                    "Expected a string to match a certain pattern but it is null",
                     Assert::GetAssertionType()
+                );
+            }
+
+            var valueMeetsExpectedResult = reMatch(outerArgs.expectedValue, arguments.value).len() > 0;
+
+            if (!valueMeetsExpectedResult && variables.discriminator == false) {
+                ThrowHelper(
+                    "Expected a string to match a certain pattern but it does not",
+                    outerArgs.expectedValue,
+                    arguments.value
+                );
+            }
+
+            if (valueMeetsExpectedResult && variables.discriminator == true) {
+                ThrowHelper(
+                    "Expected a string to not match a certain pattern but it does",
+                    outerArgs.expectedValue,
+                    arguments.value
                 );
             }
         };
