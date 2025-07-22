@@ -2,14 +2,14 @@
 
 <cfif structKeyExists(URL, "Reset") >
     <cfset sessionInvalidate() />
-    <cfset request.action = "Reset" />
+
     <cflocation addtoken="false" url="#redirectUrl#?action=reset" />
 </cfif>
 
 <cfif structKeyExists(URL, "Restart") >
     <cfset sessionInvalidate() />
     <cfset applicationStop() />
-    <cfset request.action = "Restarted" />
+
     <cflocation addtoken="false" url="#redirectUrl#?action=restarted" />
 </cfif>
 

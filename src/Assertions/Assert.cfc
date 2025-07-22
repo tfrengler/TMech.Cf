@@ -7,4 +7,8 @@ component displayname="Assert" modifier="final" output="false" accessors="false"
     public static void function ThatString(required string value, required StringConstraint constraint) output = true {
         arguments.constraint.run(value);
     }
+
+    public static void function ThatNumber(required number value, required NumberConstraint constraint) output = true {
+        arguments.constraint.run(value);
+    }
 }
