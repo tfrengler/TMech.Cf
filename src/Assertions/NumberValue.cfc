@@ -71,4 +71,23 @@ component displayname="NumberValue" modifier="final" output="false" accessors="f
 
         return new NumberConstraint(predicate);
     }
+
+    public NumberConstraint function LessThanOrEqualToZero() output = false {
+
+        var outerArgs = arguments;
+        var predicate = (required numeric value) => {
+
+            var valueIsLessThanOrEqualToZero = arguments.value <= 0;
+
+            if (!valueIsZero && variables.discriminator == false) {
+                throw(message="Expected value to be less than or equal to zero but it is #arguments.value#", type=Assert::GetAssertionType());
+            }
+
+            if (valueIsZero && variables.discriminator == true) {
+                throw(message="Expected value to not be less than or equal to zero but it is #arguments.value#", type=Assert::GetAssertionType());
+            }
+        };
+
+        return new NumberConstraint(predicate);
+    }
 }
