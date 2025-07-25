@@ -1,4 +1,4 @@
-<cfset redirectUrl = reReplace(CGI.script_name, "^/+", "", "all")  />
+<cfset redirectUrl = reReplace(CGI.script_name, "^/+", "", "all") />
 
 <cfif structKeyExists(URL, "Reset") >
     <cfset sessionInvalidate() />

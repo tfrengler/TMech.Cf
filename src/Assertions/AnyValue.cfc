@@ -169,4 +169,39 @@ component displayname="AnyValue" modifier="final" output="false" accessors="fals
 
         return new AnyConstraint(predicate);
     }
+
+    public AnyConstraint function Boolean() output = false {
+
+        var predicate = (required any value) => {
+
+            if (variables.discriminator == false && isNull(arguments.value)) {
+                throw(message="Expected value to be a boolean but it is null", type=Assert::GetAssertionType());
+            }
+
+            if (variables.discriminator == true && isNull(arguments.value)) {
+                return;
+            }
+
+            var actualType = arguments.value.getClass().getName();
+            var valueIsType = actualType == "java.lang.Boolean";
+
+            if (!valueIsType && variables.discriminator == false) {
+                ThrowHelper(
+                    "Expected value to be a boolean but it is not",
+                    "java.lang.Boolean",
+                    actualType
+                );
+            }
+
+            if (valueIsType && variables.discriminator == true) {
+                ThrowHelper(
+                    "Expected value to not be a boolean but it is",
+                    "java.lang.Boolean",
+                    actualType
+                );
+            }
+        };
+
+        return new AnyConstraint(predicate);
+    }
 }

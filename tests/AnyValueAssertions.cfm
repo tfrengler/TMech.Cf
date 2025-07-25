@@ -219,7 +219,7 @@
             }, Assertions.Assert::GetAssertionType());
         });
 
-        Tester.RunTest("AnyValue::IsNot().Struct()) => [] - should throw", () => {
+        Tester.RunTest("AnyValue::IsNot().Struct()) => {} - should throw", () => {
 
             Assert::Throws(() => {
                 Assertions.Assert::That({}, Assertions.AnyValue::IsNot().Struct());
@@ -227,7 +227,7 @@
         });
 
         // SHOULD NOT THROW
-        Tester.RunTest("AnyValue::Is().Struct()) => [] - should not throw", () => {
+        Tester.RunTest("AnyValue::Is().Struct()) => {} - should not throw", () => {
 
             Assert::DoesNotThrow(() => {
                 Assertions.Assert::That({}, Assertions.AnyValue::Is().Struct());
@@ -238,6 +238,55 @@
 
             Assert::DoesNotThrow(() => {
                 Assertions.Assert::That(42, Assertions.AnyValue::IsNot().Struct());
+            });
+        });
+
+    Tester.EndTests();
+
+    Tester.BeginTests("Boolean()");
+
+        // NULL
+        Tester.RunTest("AnyValue::Is().Boolean() => null - should throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(null, Assertions.AnyValue::Is().Boolean());
+            }, Assertions.Assert::GetAssertionType());
+        });
+
+        Tester.RunTest("AnyValue::IsNot().Boolean() => null - should not throw", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(null, Assertions.AnyValue::IsNot().Boolean());
+            });
+        });
+
+        // SHOULD THROW
+        Tester.RunTest("AnyValue::Is().Boolean()) => 42 - should throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(42, Assertions.AnyValue::Is().Boolean());
+            }, Assertions.Assert::GetAssertionType());
+        });
+
+        Tester.RunTest("AnyValue::IsNot().Boolean()) => true - should throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(true, Assertions.AnyValue::IsNot().Boolean());
+            }, Assertions.Assert::GetAssertionType());
+        });
+
+        // SHOULD NOT THROW
+        Tester.RunTest("AnyValue::Is().Boolean()) => false - should not throw", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(false, Assertions.AnyValue::Is().Boolean());
+            });
+        });
+
+        Tester.RunTest("AnyValue::IsNot().Boolean()) => 42 - should not throw", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(42, Assertions.AnyValue::IsNot().Boolean());
             });
         });
 
