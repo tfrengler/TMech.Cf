@@ -89,6 +89,46 @@
         });
 
     Tester.EndTests();
+
+    Tester.BeginTests("LessThanOrEqualToZero()");
+
+        Tester.RunTest("NumberValue::Is().LessThanOrEqualToZero() => 1 - should throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::ThatNumber(1, Assertions.NumberValue::Is().LessThanOrEqualToZero());
+            }, Assertions.Assert::GetAssertionType());
+        });
+
+        Tester.RunTest("NumberValue::IsNot().LessThanOrEqualToZero() => 0 and -1 - should throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::ThatNumber(0, Assertions.NumberValue::IsNot().LessThanOrEqualToZero());
+            }, Assertions.Assert::GetAssertionType());
+
+            Assert::Throws(() => {
+                Assertions.Assert::ThatNumber(-1, Assertions.NumberValue::IsNot().LessThanOrEqualToZero());
+            }, Assertions.Assert::GetAssertionType());
+        });
+
+        Tester.RunTest("NumberValue::Is().LessThanOrEqualToZero() => 0 and -1 - should not throw", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::ThatNumber(0, Assertions.NumberValue::Is().LessThanOrEqualToZero());
+            });
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::ThatNumber(-1, Assertions.NumberValue::Is().LessThanOrEqualToZero());
+            });
+        });
+
+        Tester.RunTest("NumberValue::IsNot().LessThanOrEqualToZero() => 1 - should not throw", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::ThatNumber(1, Assertions.NumberValue::IsNot().LessThanOrEqualToZero());
+            });
+        });
+
+    Tester.EndTests();
 </cfscript>
 
 </body>

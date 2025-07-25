@@ -8,24 +8,19 @@ Assert
 
 Any
 {
-    Is()
-    IsNot()
-    Does()
-    DoesNot()
-
     Null()
     Throw()
+    String()
+    Numeric()
+    Boolean()
+    Array()
+    Struct()
 }
 
 ######################################################################################################
 
 String
 {
-    ::Is() => String
-    ::IsNot() => String
-    ::Does() => String
-    ::DoesNot() => String
-
     IgnoringWhitespace() => String
     IgnoringCasing() => String
 
@@ -37,22 +32,10 @@ String
     Contain(required string value) => StringConstraint
 }
 
-StringConstraint
-{
-    private Function predicate
-    Init(required function predicate)
-    run() => void
-}
-
 ######################################################################################################
 
 Number
 {
-    ::Is() => Number
-    ::IsNot() => Number
-    ::Does() => Number
-    ::DoesNot() => Number
-
     Zero()
     LessThanZero()
     LessThanOrEqualToZero()
@@ -61,49 +44,16 @@ Number
     EqualTo(required numeric value)
 }
 
-NumberConstraint
-{
-    private Function predicate
-    Init(required function predicate)
-    IsSatisfied(required numeric value) => bool
-}
-
 ######################################################################################################
-
-IArrayIsConstraint
-{
-    Empty()
-    SatisfiedBy(required function predicate)
-    SimilarTo(required array values)
-    SequenceEqualTo(required array values)
-}
-
-IArrayDoesConstraint
-{
-    Contain(required any value)
-    ContainAll(required array values)
-}
 
 Array
 {
-    Is()
-    IsNot()
-    Does()
-    DoesNot()
-
     Empty()
     SatisfiedBy(required function predicate)
     SimilarTo(required array values)
     SequenceEqualTo(required array values)
-    Contain(required any value)
-    ContainAll(required array values)
-}
-
-ArrayConstraint
-{
-    private Function predicate
-    Init(required function predicate)
-    IsSatisfied(required array value) => bool
+    Containing(required any value)
+    ContainingAll(required array values)
 }
 
 ######################################################################################################
@@ -118,11 +68,4 @@ Date
     After(required date value)
     BetweenInclusive(required date lower, required date upper)
     BetweenExclusive(required date lower, required date upper)
-}
-
-DateConstraint
-{
-    private Function predicate
-    Init(required function predicate)
-    IsSatisfied(required date value) => bool
 }

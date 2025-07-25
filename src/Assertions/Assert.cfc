@@ -4,11 +4,16 @@ component displayname="Assert" modifier="final" output="false" accessors="false"
         return "TMech.Assertion.Failed";
     }
 
-    public static void function ThatString(required string value, required StringConstraint constraint) output = true {
+    public static void function ThatString(required string value, required StringConstraint constraint) output = false {
+        // That(arguments.value, AnyValue::Is().String());
         arguments.constraint.run(value);
     }
 
-    public static void function ThatNumber(required number value, required NumberConstraint constraint) output = true {
+    public static void function ThatNumber(required numeric value, required NumberConstraint constraint) output = false {
+        arguments.constraint.run(value);
+    }
+
+    public static void function That(required any value, required AnyConstraint constraint) output = false {
         arguments.constraint.run(value);
     }
 }

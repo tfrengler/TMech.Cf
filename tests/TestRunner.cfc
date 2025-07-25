@@ -37,6 +37,7 @@ component displayname="TestRunner" modifier="final" output="true" accessors="fal
             variables.Failures.append({
                 "Name": arguments.name,
                 "Message": error.Message,
+                "Detail": error.Detail,
                 "TimeTaken": getTickCount() - Start,
                 "StackTrace": StackTrace
             });
@@ -66,7 +67,8 @@ component displayname="TestRunner" modifier="final" output="true" accessors="fal
                 writeOutput("<fieldset style='background-color:rgb(242, 242, 242)'>");
                 writeOutput("<legend style='background-color:rgb(0, 102, 255);color:white;font-size:1.2rem'>#arguments.testCase.Name# (#arguments.testCase.TimeTaken# ms)</legend>");
 
-                writeOutput("<h3>#arguments.testCase.message#</h3>");
+                writeOutput("<h3>#arguments.testCase.Message#</h3>");
+                writeOutput("<h4>#arguments.testCase.Detail#</h4>");
                 writeDump(var=arguments.testCase.StackTrace, label="Stack trace");
 
                 writeOutput("</fieldset>");

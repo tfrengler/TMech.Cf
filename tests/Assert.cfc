@@ -98,7 +98,11 @@ component displayname="Assert" modifier="final" output="false" accessors="false"
         var ExpectedExpectionTypeName = arguments.exceptionType.trim();
 
         if (ExceptionTypeName != ExpectedExpectionTypeName) {
-            throw("Assertion failed! Expected function to throw an exception of type #arguments.exceptionType# but instead found #ExceptionTypeName#", "TMech.Cf.Assertion");
+            throw(
+                message="Assertion failed! Expected function to throw an exception of type #arguments.exceptionType# but instead found type: #ExceptionTypeName#",
+                detail="Error message = #TheException.Message# | Error detail = #TheException.Detail#",
+                type="TMech.Cf.Assertion"
+            );
         }
     }
 
@@ -116,7 +120,11 @@ component displayname="Assert" modifier="final" output="false" accessors="false"
         }
 
         if (ThrewException) {
-            throw("Assertion failed! Expected function to not throw an exception but it did: #TheException.message# (type: #TheException.type#)", "TMech.Cf.Assertion");
+            throw(
+                message="Assertion failed! Expected function to not throw an exception but it did (type: #TheException.type#)",
+                detail="Error message = #TheException.Message# | Error detail = #TheException.Detail#",
+                type="TMech.Cf.Assertion"
+            );
         }
     }
 
