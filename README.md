@@ -49,11 +49,12 @@ The WebdriverContext is a wrapper around the underlying Java-webdriver and conta
 
 ### Installation:
 
-Before you get started you need Selenium. Go to the website (https://www.selenium.dev/downloads/) and download the Java-bindings. There are two options now depending on how you want to use this library:
+Before you get started you need the Selenium Java-files. Go to the website (https://www.selenium.dev/downloads/) and download the Java-bindings. There are two options now depending on how you want to use this library:
 
-**1:** If you chose to use the **Application.cfc** included then a singleton instance of **Selenium.cfc** will be instantiated on application startup and put in the **application**-scope. Unzip the contents of the Java-bindings into a folder called **SeleniumLibs** inside the root folder (where Application.cfc lives).
+**1:** If you chose to use the **Application.cfc** that's included in this library then you need to do very little. Unzip the contents of the Java-bindings into a folder called **SeleniumLibs** inside the root folder (where Application.cfc lives).
+A singleton instance of **Selenium.cfc** will be instantiated and registed on application startup and put in the **application**-scope.
 
-**2:** If you chose to use your own setup then you will have to manage the lifetime of **Selenium.cfc** yourself. Unzip the contents of the Java-bindings into a folder of your choice. Instantiate Seleniu.cfc with the folder where the Java-bindings as argument Somewhere in your startup routine call the static method **WebdriverBuilder::RegisterSelenium** with your Selenium-instance.
+**2:** If you chose to use your own setup then you will have to manage the lifetime of **Selenium.cfc** yourself. First unzip the contents of the Java-bindings into a folder of your choice. Instantiate **Selenium.cfc** with the folder where the Java-bindings are located as argument for the constructor. Then somewhere in your startup routine call the static method **WebdriverBuilder::RegisterSelenium** with your Selenium-instance.
 
 *EXAMPLES:*
 
@@ -63,6 +64,8 @@ selenium = new Utils.Selenium("C:\SeleniumJavaBindings\");
 
 // Register Selenium-bindings globally. All WebdriverBuilder-instances will use instance this going forward
 Utils.WebdriverBuilder::RegisterSelenium(selenium);
+
+// NOTE: If you use the included Application.cfc then two steps above can be skipped.
 
 // Starting Chrome locally (local drivers are implicitly headless)
 
@@ -94,7 +97,6 @@ context = Utils.WebdriverBuilder::CreateRemote("CHROME", "http://my-selenium-gri
 context.Driver().get("https://www.somewebsite.com/");
 
 // Fetch element and click it
-selenium = handle_to_selenium_component;
 element = context.Driver().findElement(selenium.By().cssSelector("#IdOfSomeElement"));
 element.click();
 
