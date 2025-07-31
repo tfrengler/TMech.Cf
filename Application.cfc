@@ -24,7 +24,8 @@
 
     <cffunction name="onApplicationStart" returnType="boolean" output="false">
     <cfscript>
-        // application.Selenium = new Utils.Selenium(this.appRoot & "SeleniumLibs");
+        application.Selenium = new Utils.Selenium(this.appRoot & "SeleniumLibs");
+        Utils.WebdriverBuilder::RegisterSelenium(application.Selenium);
 
         return true;
     </cfscript>

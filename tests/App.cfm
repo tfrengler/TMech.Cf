@@ -1,16 +1,14 @@
-<cfset redirectUrl = reReplace(CGI.script_name, "^/+", "", "all") />
-
 <cfif structKeyExists(URL, "Reset") >
     <cfset sessionInvalidate() />
-
-    <cflocation addtoken="false" url="#redirectUrl#?action=reset" />
+    <cfset request.action = "Reset" />
+    <cflocation addtoken="false" url="#CGI.SCRIPT_NAME#?action=reset" />
 </cfif>
 
 <cfif structKeyExists(URL, "Restart") >
     <cfset sessionInvalidate() />
     <cfset applicationStop() />
-
-    <cflocation addtoken="false" url="#redirectUrl#?action=restarted" />
+    <cfset request.action = "Restarted" />
+    <cflocation addtoken="false" url="#CGI.SCRIPT_NAME#?action=restarted" />
 </cfif>
 
 <cfoutput>

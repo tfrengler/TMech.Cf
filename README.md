@@ -1,13 +1,22 @@
 # TMech.Cf
 
-What is this? Well, it's a boostrapping/utility library built around Selenium for **Coldfusion**. Use it for personal or professional projects, fork it and make your own changes or use a learning exercise to write your own tools. If it helps someone else in some capacity then that is great.
+An opionated boostrapping/utility library built around Selenium for **Coldfusion**, specifically targeting **Lucee**. Its purpose is to try and make it easier to get automated UI testing up and running without too much trouble.
+
+Use it for personal or professional projects, fork it and make your own changes or use a learning exercise to write your own tools. If it helps someone else in some capacity then that is great.
 
 The project is provided here in public **as-is**. It is open-source but not open-contribution. Patches, feature- and change requests are not accepted. If there are bugs I will try to fix them when my time allows.
 ## TESTS:
 
 Almost everything is covered by functional/regression tests so that I can be (reasonably) sure that nothing I change or fix will break stuff. Most of these tests are quite technically involved since they require a local install of all supported browsers and their webdriver binaries, as well as a Selenium Grid server. I try to automate as much as I can but some things (particularly all the variations of starting a WebdriverContext) are better off being manually tested.
 
-*NOTE*: All the tests live in the *tests*-subfolder which you can safely ignore/delete.
+All the tests are in the *tests*-subfolder which you can safely ignore/delete.
+
+**Tested against**:
+- Lucee 6.1.1.118: **OK**
+- Lucee 6.2.1.122: **NOK (see below)**
+- Lucee 7.0.0.202: *UNTESTED*
+
+*NOTE:* There seems to something amiss with instantiating Java-objects in Lucee 6.2 so if you encounter exceptions about Lucee not being able to instantiate or resolve Java-classes then this is likely the issue! It especially seems to have issues with nested classes (org.openqa.selenium.remote.RemoteWebDriver$ByteBuddy comes up frequently). Use Lucee 6.1 for now.
 
 ## CONTENTS:
 
@@ -40,11 +49,12 @@ The WebdriverContext is a wrapper around the underlying Java-webdriver and conta
 
 ### Installation:
 
-Before you get started you need Selenium. Go to the website (https://www.selenium.dev/downloads/) and download the Java-bindings.
+Before you get started you need the Selenium Java-files. Go to the website (https://www.selenium.dev/downloads/) and download the Java-bindings. There are two options now depending on how you want to use this library:
 
-If you chose to use the **Application.cfc** included then a singleton instance of **Selenium.cfc** will be instantiated on application startup and put in the **application**-scope. Unzip the contents of the Java-bindings into a folder called **SeleniumLibs** inside the root folder (where Application.cfc lives).
+**1:** If you chose to use the **Application.cfc** that's included in this library then you need to do very little. Unzip the contents of the Java-bindings into a folder called **SeleniumLibs** inside the root folder (where Application.cfc lives).
+A singleton instance of **Selenium.cfc** will be instantiated and registed on application startup and put in the **application**-scope.
 
-If you chose to use your own setup then you will have to manage the lifetime of **Selenium.cfc** yourself. It expects the folder where the Java-bindings live in its constructor.
+**2:** If you chose to use your own setup then you will have to manage the lifetime of **Selenium.cfc** yourself. First unzip the contents of the Java-bindings into a folder of your choice. Instantiate **Selenium.cfc** with the folder where the Java-bindings are located as argument for the constructor. Then somewhere in your startup routine call the static method **WebdriverBuilder::RegisterSelenium** with your Selenium-instance.
 
 *EXAMPLES:*
 
@@ -54,6 +64,8 @@ selenium = new Utils.Selenium("C:\SeleniumJavaBindings\");
 
 // Register Selenium-bindings globally. All WebdriverBuilder-instances will use instance this going forward
 Utils.WebdriverBuilder::RegisterSelenium(selenium);
+
+// NOTE: If you use the included Application.cfc then two steps above can be skipped.
 
 // Starting Chrome locally (local drivers are implicitly headless)
 
@@ -85,7 +97,6 @@ context = Utils.WebdriverBuilder::CreateRemote("CHROME", "http://my-selenium-gri
 context.Driver().get("https://www.somewebsite.com/");
 
 // Fetch element and click it
-selenium = handle_to_selenium_component;
 element = context.Driver().findElement(selenium.By().cssSelector("#IdOfSomeElement"));
 element.click();
 

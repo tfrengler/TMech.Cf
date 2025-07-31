@@ -97,7 +97,6 @@
 
     <cfscript>
 
-    Utils.WebdriverBuilder::RegisterSelenium(application.Selenium);
     tempFolder = "C:\Dev\Temp\";
 
     startDriverService = function() {
