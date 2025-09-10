@@ -1,71 +1,59 @@
-Assert
-{
-    ThatString(required string value, required String constraint)
-    ThatNumber(required number value, required Number constraint)
-    ThatArray(required array value, required Array constraint)
-    That(required any value, required Value constraint)
-}
-
 Any
 {
-    Null()
-    Throw()
-    String()
-    Numeric()
-    Boolean()
-    Array()
-    Struct()
+    ❌ Null()
+    ❌ Throwing()
+    ✅ String()
+    ✅ Numeric()
+    ✅ Boolean()
+    ✅ Array()
+    ✅ Struct()
 }
 
 ######################################################################################################
 
 String
 {
-    IgnoringWhitespace() => String
-    IgnoringCasing() => String
-
-    Nothing() => StringConstraint
-    EqualTo(required string value) => StringConstraint
-
-    StartsWith(required string value) => StringConstraint
-    EndsWith(required string value) => StringConstraint
-    Contain(required string value) => StringConstraint
+    ❌ IgnoringWhitespace()
+    ❌ IgnoringCasing()
+    ✅ Nothing()
+    ✅ EqualTo()
+    ✅ StartingWith()
+    ✅ EndingWith()
+    ✅ Containing()
+    ✅ Matching()
 }
 
 ######################################################################################################
 
 Number
 {
-    Zero()
-    LessThanZero()
-    LessThanOrEqualToZero()
-    LessThan(required numeric value)
-    GreaterThan(required numeric value)
-    EqualTo(required numeric value)
+    ✅ Zero()
+    ❌ LessThanZero()
+    ✅ LessThanOrEqualToZero()
+    ❌ LessThan()
+    ❌ GreaterThan()
+    ✅ EqualTo()
 }
 
 ######################################################################################################
 
 Array
 {
-    Empty()
-    SatisfiedBy(required function predicate)
-    SimilarTo(required array values)
-    SequenceEqualTo(required array values)
-    Containing(required any value)
-    ContainingAll(required array values)
+    ❌ Empty()
+    ❌ SatisfiedBy
+    ❌ SimilarTo
+    ❌ SequenceEqualTo
+    ❌ Containing
+    ❌ ContainingAll
 }
 
 ######################################################################################################
 
 Date
 {
-    ::Is() => Date
-    ::IsNot() => Date
-
-    EqualTo(required date value)
-    Before(required date value)
-    After(required date value)
-    BetweenInclusive(required date lower, required date upper)
-    BetweenExclusive(required date lower, required date upper)
+    ❌ EqualTo
+    ❌ Before
+    ❌ After
+    ❌ BetweenInclusive
+    ❌ BetweenExclusive
 }

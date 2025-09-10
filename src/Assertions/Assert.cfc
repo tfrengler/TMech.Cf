@@ -5,7 +5,6 @@ component displayname="Assert" modifier="final" output="false" accessors="false"
     }
 
     public static void function ThatString(required string value, required StringConstraint constraint) output = false {
-        // That(arguments.value, AnyValue::Is().String());
         arguments.constraint.run(value);
     }
 
