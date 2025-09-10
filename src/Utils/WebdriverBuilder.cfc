@@ -16,7 +16,7 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
     property name="BrowserArguments" type="array"                                               getter="true" setter="false";
 
     static {
-        Selenium = nullValue();
+        static.Selenium = nullValue();
     }
 
     /**
@@ -70,7 +70,7 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
      * @hint Registers an instance of Selenium that will be used globally by all subsequent WebdriverBuilder-instances.
      *       Required for the WebdriverBuilder to work, otherwise it can't resolve Selenium Java-object.
      */
-    public static void function RegisterSelenium(required Selenium selenium) {
+    public static void function RegisterSelenium(required Selenium selenium) output = false {
         static.Selenium = arguments.selenium;
     }
 
@@ -212,7 +212,7 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
         }
 
         return new Services.WebdriverContext(
-            selenium = variables.Selenium,
+            selenium = static.Selenium,
             isRemote = variables.IsRemote,
             isHeadless = variables.IsHeadless,
             isMaximized = variables.IsMaximized,
