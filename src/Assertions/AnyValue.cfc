@@ -204,4 +204,53 @@ component displayname="AnyValue" modifier="final" output="false" accessors="fals
 
         return new AnyConstraint(predicate);
     }
+
+    public AnyConstraint function Throwing(string expectedType = "") output = false {
+        // Need to get a reference here otherwise the predicate can't capture it
+        var localExpectedType = arguments.expectedType;
+        var predicate = (required any value) => {
+
+            if (isNull(arguments.value) || !(isClosure(arguments.value) || isCustomFunction(arguments.value))) {
+                throw(message="Error asserting whether value throws or not because it is not a function or a closure", type=Assert::GetAssertionType());
+            }
+
+            var threw = false;
+            var exception = 0;
+
+            try {
+                arguments.value();
+            }
+            catch (any error) {
+                threw = true;
+                exception = error;
+            }
+
+            if (discriminator == false) {
+                if (!threw) {
+                    throw(message="Expected value to throw but it did not", type=Assert::GetAssertionType());
+                }
+
+                if (localExpectedType.len() > 0 && exception.type != localExpectedType) {
+                    throw(
+                        message="Expected value to throw an exception of type #localExpectedType# but it was #exception.type#",
+                        detail=exception.message,
+                        type=Assert::GetAssertionType()
+                    );
+                }
+            }
+
+            if (discriminator == true && threw) {
+                throw(
+                    message="Expected value to not throw but it did",
+                    detail = "
+                        EXCEPTION MESSAGE: #exception.message#
+                        EXCEPTION DETAIL : #exception.detail#
+                    ",
+                    type=Assert::GetAssertionType()
+                );
+            }
+        };
+
+        return new AnyConstraint(predicate);
+    }
 }

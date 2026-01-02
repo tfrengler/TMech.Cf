@@ -1,7 +1,7 @@
 Any
 {
     ❌ Null()
-    ❌ Throwing()
+    ✅ Throwing()
     ✅ String()
     ✅ Numeric()
     ✅ Boolean()
