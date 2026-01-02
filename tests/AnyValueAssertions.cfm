@@ -25,7 +25,7 @@
 
 <cfscript>
     Tester = new TestRunner("Assert::That, AnyConstraint.cfc and AnyValue.cfc");
-    /*
+
     Tester.BeginTests("String()");
 
         // NULL
@@ -291,109 +291,109 @@
         });
 
     Tester.EndTests();
-    */
+
     Tester.BeginTests("Throwing");
 
-    Tester.RunTest("AnyValue::Is().Throwing() => null = should throw", () => {
+        Tester.RunTest("AnyValue::Is().Throwing() => null = should throw", () => {
 
-        var errorMessage = Assert::Throws(() => {
-                Assertions.Assert::That(null, Assertions.AnyValue::Is().Throwing());
-            },
-            Assertions.Assert::GetAssertionType()
-        );
+            var errorMessage = Assert::Throws(() => {
+                    Assertions.Assert::That(null, Assertions.AnyValue::Is().Throwing());
+                },
+                Assertions.Assert::GetAssertionType()
+            );
 
-        if (errorMessage != "Error asserting whether value throws or not because it is not a function or a closure") {
-            throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-        }
-    });
-
-    Tester.RunTest("AnyValue::IsNot().Throwing() => null = should throw", () => {
-
-        var errorMessage = Assert::Throws(() => {
-                Assertions.Assert::That(null, Assertions.AnyValue::IsNot().Throwing());
-            },
-            Assertions.Assert::GetAssertionType()
-        );
-
-        if (errorMessage != "Error asserting whether value throws or not because it is not a function or a closure") {
-            throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-        }
-    });
-
-    Tester.RunTest("AnyValue::Is().Throwing() => not a function = should throw", () => {
-
-        var errorMessage = Assert::Throws(() => {
-                Assertions.Assert::That(1, Assertions.AnyValue::Is().Throwing());
-            },
-            Assertions.Assert::GetAssertionType()
-        );
-
-        if (errorMessage != "Error asserting whether value throws or not because it is not a function or a closure") {
-            throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-        }
-    });
-    // AnyValue::Is().Throwing()
-    Tester.RunTest("AnyValue::Is().Throwing() => closure that does not throw = should throw", () => {
-
-        var errorMessage = Assert::Throws(() => {
-                Assertions.Assert::That(() => true, Assertions.AnyValue::Is().Throwing());
-            },
-            Assertions.Assert::GetAssertionType()
-        );
-
-        if (errorMessage != "Expected value to throw but it did not") {
-            throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-        }
-    });
-
-    Tester.RunTest("AnyValue::Is().Throwing() => closure that does throw = should not throw", () => {
-
-        Assert::DoesNotThrow(() => {
-            Assertions.Assert::That(() => throw("Please catch me"), Assertions.AnyValue::Is().Throwing());
+            if (errorMessage != "Error asserting whether value throws or not because it is not a function or a closure") {
+                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
+            }
         });
-    });
 
-    Tester.RunTest("AnyValue::Is().Throwing() => closure that throws wrong type = should throw", () => {
+        Tester.RunTest("AnyValue::IsNot().Throwing() => null = should throw", () => {
 
-        var errorMessage = Assert::Throws(() => {
-                Assertions.Assert::That(() => throw("I am a test error", "WrongType"), Assertions.AnyValue::Is().Throwing("TheRightType"));
-            },
-            Assertions.Assert::GetAssertionType()
-        );
+            var errorMessage = Assert::Throws(() => {
+                    Assertions.Assert::That(null, Assertions.AnyValue::IsNot().Throwing());
+                },
+                Assertions.Assert::GetAssertionType()
+            );
 
-        if (errorMessage != "Expected value to throw an exception of type TheRightType but it was WrongType") {
-            throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-        }
-    });
-
-    Tester.RunTest("AnyValue::Is().Throwing() => closure that throws the correct type = should not throw", () => {
-
-        Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(() => throw("I am a test error", "MyExceptionType"), Assertions.AnyValue::Is().Throwing("MyExceptionType"));
+            if (errorMessage != "Error asserting whether value throws or not because it is not a function or a closure") {
+                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
             }
-        );
-    });
-    // AnyValue::IsNot().Throwing()
-    Tester.RunTest("AnyValue::IsNot().Throwing() => closure that does throw = should throw", () => {
+        });
 
-        var errorMessage = Assert::Throws(() => {
-                Assertions.Assert::That(() => throw("Naughty error"), Assertions.AnyValue::IsNot().Throwing());
-            },
-            Assertions.Assert::GetAssertionType()
-        );
+        Tester.RunTest("AnyValue::Is().Throwing() => not a function = should throw", () => {
 
-        if (errorMessage != "Expected value to not throw but it did") {
-            throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-        }
-    });
+            var errorMessage = Assert::Throws(() => {
+                    Assertions.Assert::That(1, Assertions.AnyValue::Is().Throwing());
+                },
+                Assertions.Assert::GetAssertionType()
+            );
 
-    Tester.RunTest("AnyValue::IsNot().Throwing() => closure that does not throw = should not throw", () => {
-
-        Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(() => true, Assertions.AnyValue::IsNot().Throwing());
+            if (errorMessage != "Error asserting whether value throws or not because it is not a function or a closure") {
+                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
             }
-        );
-    });
+        });
+        // AnyValue::Is().Throwing()
+        Tester.RunTest("AnyValue::Is().Throwing() => closure that does not throw = should throw", () => {
+
+            var errorMessage = Assert::Throws(() => {
+                    Assertions.Assert::That(() => true, Assertions.AnyValue::Is().Throwing());
+                },
+                Assertions.Assert::GetAssertionType()
+            );
+
+            if (errorMessage != "Expected value to throw but it did not") {
+                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
+            }
+        });
+
+        Tester.RunTest("AnyValue::Is().Throwing() => closure that does throw = should not throw", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(() => throw("Please catch me"), Assertions.AnyValue::Is().Throwing());
+            });
+        });
+
+        Tester.RunTest("AnyValue::Is().Throwing() => closure that throws wrong type = should throw", () => {
+
+            var errorMessage = Assert::Throws(() => {
+                    Assertions.Assert::That(() => throw("I am a test error", "WrongType"), Assertions.AnyValue::Is().Throwing("TheRightType"));
+                },
+                Assertions.Assert::GetAssertionType()
+            );
+
+            if (errorMessage != "Expected value to throw an exception of type TheRightType but it was WrongType") {
+                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
+            }
+        });
+
+        Tester.RunTest("AnyValue::Is().Throwing() => closure that throws the correct type = should not throw", () => {
+
+            Assert::DoesNotThrow(() => {
+                    Assertions.Assert::That(() => throw("I am a test error", "MyExceptionType"), Assertions.AnyValue::Is().Throwing("MyExceptionType"));
+                }
+            );
+        });
+        // AnyValue::IsNot().Throwing()
+        Tester.RunTest("AnyValue::IsNot().Throwing() => closure that does throw = should throw", () => {
+
+            var errorMessage = Assert::Throws(() => {
+                    Assertions.Assert::That(() => throw("Naughty error"), Assertions.AnyValue::IsNot().Throwing());
+                },
+                Assertions.Assert::GetAssertionType()
+            );
+
+            if (errorMessage != "Expected value to not throw but it did") {
+                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
+            }
+        });
+
+        Tester.RunTest("AnyValue::IsNot().Throwing() => closure that does not throw = should not throw", () => {
+
+            Assert::DoesNotThrow(() => {
+                    Assertions.Assert::That(() => true, Assertions.AnyValue::IsNot().Throwing());
+                }
+            );
+        });
 
     Tester.EndTests();
 </cfscript>

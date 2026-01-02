@@ -88,4 +88,23 @@ component displayname="NumberValue" modifier="final" output="false" accessors="f
 
         return new NumberConstraint(predicate);
     }
+
+    public NumberConstraint function LessThan(required numeric thresholdValue) output = false {
+
+        var localThresholdValue = arguments.thresholdValue;
+        var predicate = (required numeric value) => {
+
+            var valueIsLessThan = arguments.value < localThresholdValue;
+
+            if (!valueIsLessThan && variables.discriminator == false) {
+                throw(message="Expected value to be less than #localThresholdValue# but it is #arguments.value#", type=Assert::GetAssertionType());
+            }
+
+            if (valueIsLessThan && variables.discriminator == true) {
+                throw(message="Expected value to not be less than #localThresholdValue# but it is #arguments.value#", type=Assert::GetAssertionType());
+            }
+        };
+
+        return new NumberConstraint(predicate);
+    }
 }

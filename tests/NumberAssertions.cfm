@@ -129,6 +129,50 @@
         });
 
     Tester.EndTests();
+
+    Tester.BeginTests("LessThan()");
+
+        Tester.RunTest("NumberValue::Is().LessThan(2) => 1 - should not throw", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::ThatNumber(1, Assertions.NumberValue::Is().LessThan(2));
+            });
+        });
+
+        Tester.RunTest("NumberValue::Is().LessThan(2) => 3 - should throw", () => {
+
+            var errorMessage = Assert::Throws(() => {
+                    Assertions.Assert::ThatNumber(3, Assertions.NumberValue::Is().LessThan(2));
+                },
+                Assertions.Assert::GetAssertionType()
+            );
+
+            if (errorMessage != "Expected value to be less than 2 but it is 3") {
+                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
+            }
+        });
+
+        Tester.RunTest("NumberValue::IsNot().LessThan(2) => 3 - should not throw", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::ThatNumber(3, Assertions.NumberValue::IsNot().LessThan(2));
+            });
+        });
+
+        Tester.RunTest("NumberValue::IsNot().LessThan(2) => 1 - should throw", () => {
+
+            var errorMessage = Assert::Throws(() => {
+                    Assertions.Assert::ThatNumber(1, Assertions.NumberValue::IsNot().LessThan(2));
+                },
+                Assertions.Assert::GetAssertionType()
+            );
+
+            if (errorMessage != "Expected value to not be less than 2 but it is 1") {
+                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
+            }
+        });
+
+    Tester.EndTests();
 </cfscript>
 
 </body>
