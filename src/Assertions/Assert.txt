@@ -1,6 +1,5 @@
 Any
 {
-    ❌ Null()
     ✅ Throwing()
     ✅ String()
     ✅ Numeric()
@@ -28,10 +27,9 @@ String
 Number
 {
     ✅ Zero()
-    ❌ LessThanZero()
     ✅ LessThanOrEqualToZero()
-    ❌ LessThan()
-    ❌ GreaterThan()
+    ✅ LessThan()
+    ✅ GreaterThan()
     ✅ EqualTo()
 }
 
@@ -56,4 +54,13 @@ Date
     ❌ After
     ❌ BetweenInclusive
     ❌ BetweenExclusive
+}
+
+######################################################################################################
+
+Struct
+{
+    ❌ ContainingProperty
+    ❌ Empty
+    ❌ HavingCount
 }

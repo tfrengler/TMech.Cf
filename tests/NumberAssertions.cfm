@@ -173,6 +173,50 @@
         });
 
     Tester.EndTests();
+
+    Tester.BeginTests("GreaterThan()");
+
+        Tester.RunTest("NumberValue::Is().GreaterThan(1) => 2 - should not throw", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::ThatNumber(2, Assertions.NumberValue::Is().GreaterThan(1));
+            });
+        });
+
+        Tester.RunTest("NumberValue::Is().GreaterThan(2) => 1 - should throw", () => {
+
+            var errorMessage = Assert::Throws(() => {
+                    Assertions.Assert::ThatNumber(1, Assertions.NumberValue::Is().GreaterThan(2));
+                },
+                Assertions.Assert::GetAssertionType()
+            );
+
+            if (errorMessage != "Expected value to be greater than 2 but it is 1") {
+                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
+            }
+        });
+
+        Tester.RunTest("NumberValue::IsNot().GreaterThan(2) => 1 - should not throw", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::ThatNumber(1, Assertions.NumberValue::IsNot().GreaterThan(2));
+            });
+        });
+
+        Tester.RunTest("NumberValue::IsNot().GreaterThan(1) => 2 - should throw", () => {
+
+            var errorMessage = Assert::Throws(() => {
+                    Assertions.Assert::ThatNumber(2, Assertions.NumberValue::IsNot().GreaterThan(1));
+                },
+                Assertions.Assert::GetAssertionType()
+            );
+
+            if (errorMessage != "Expected value to not be greater than 1 but it is 2") {
+                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
+            }
+        });
+
+    Tester.EndTests();
 </cfscript>
 
 </body>
