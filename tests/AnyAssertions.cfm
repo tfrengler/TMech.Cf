@@ -292,7 +292,7 @@
 
     Tester.EndTests();
 
-    Tester.BeginTests("Throwing");
+    Tester.BeginTests("Throwing()");
 
         Tester.RunTest("AnyValue::Is().Throwing() => null = should throw", () => {
 
