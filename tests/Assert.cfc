@@ -104,7 +104,10 @@ component displayname="Assert" modifier="final" output="false" accessors="false"
 
             throw(
                 message="Assertion failed! Expected function to throw an exception of type #arguments.exceptionType# but instead found type: #ExceptionTypeName#",
-                detail="Error message = #TheException.Message# | Error detail = #TheException.Detail#",
+                detail="
+                    Error message = #TheException.Message#
+                    Error detail = #TheException.Detail#
+                ",
                 type="TMech.Cf.Assertion"
             );
         }

@@ -15,4 +15,8 @@ component displayname="Assert" modifier="final" output="false" accessors="false"
     public static void function That(required any value, required AnyConstraint constraint) output = false {
         arguments.constraint.run(value);
     }
+
+    public static void function ThatArray(required array value, required ArrayConstraint constraint) output = false {
+        arguments.constraint.run(value);
+    }
 }

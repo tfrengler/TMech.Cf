@@ -37,12 +37,12 @@ Number
 
 Array
 {
-    ❌ Empty()
-    ❌ SatisfiedBy
+    ✅ Empty()
+    ✅ SatisfiedByAny
+    ❌ SatisfiedByAll
     ❌ SimilarTo
     ❌ SequenceEqualTo
     ❌ Containing
-    ❌ ContainingAll
 }
 
 ######################################################################################################

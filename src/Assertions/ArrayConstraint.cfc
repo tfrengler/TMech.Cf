@@ -2,7 +2,7 @@ component displayname="ArrayConstraint" modifier="final" output="false" accessor
 {
     property name="predicate" type="function" getter="false" setter="false";
 
-    public AnyConstraint function Init(required function predicate) output = false {
+    public ArrayConstraint function Init(required function predicate) output = false {
         variables.predicate = arguments.predicate;
         return this;
     }
