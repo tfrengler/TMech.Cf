@@ -4,19 +4,7 @@ component displayname="Assert" modifier="final" output="false" accessors="false"
         return "TMech.Assertion.Failed";
     }
 
-    public static void function ThatString(required string value, required StringConstraint constraint) output = false {
-        arguments.constraint.run(value);
-    }
-
-    public static void function ThatNumber(required numeric value, required NumberConstraint constraint) output = false {
-        arguments.constraint.run(value);
-    }
-
-    public static void function That(required any value, required AnyConstraint constraint) output = false {
-        arguments.constraint.run(value);
-    }
-
-    public static void function ThatArray(required array value, required ArrayConstraint constraint) output = false {
-        arguments.constraint.run(value);
+    public static void function That(required any value, required ConstraintChain constraints) output = false {
+        arguments.constraints.ApplyAll(arguments.value);
     }
 }

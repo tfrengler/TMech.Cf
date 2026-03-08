@@ -1,9 +1,10 @@
-component displayname="StringValue" modifier="final" output="false" accessors="false" persistent="true"
-{
-    property name="discriminator" type="boolean" getter="false" setter="false";
+component displayname="StringValue" extends="ConstraintChain" modifier="final" output="false" accessors="false" persistent="true" {
 
-    private StringValue function Init(required bool discriminator) output = false {
-        variables.discriminator = arguments.discriminator;
+    property name="ignoreCase" type="boolean" getter="true" setter="false";
+
+    private StringValue function init(required boolean negated) {
+        super.init(arguments.negated);
+        variables.ignoreCase = false;
         return this;
     }
 
@@ -15,218 +16,155 @@ component displayname="StringValue" modifier="final" output="false" accessors="f
         return new StringValue(true);
     }
 
-    private void function ThrowHelper(required string message, required string expected, required string actual) output = false {
-        throw(
-            message = arguments.message,
-            detail = "
-                EXPECTED
-                ----Length: #len(arguments.expected)#
-                ----Value: #arguments.expected#
+    public StringValue function IgnoringCase() output = false {
+        variables.ignoreCase = true;
+        return this;
+    }
 
-                ACTUAL
-                ----Length: #len(arguments.actual)#
-                ----Value: #arguments.actual#"
-            ,
-            type = Assert::GetAssertionType()
+    public StringValue function EqualTo(required string expectedValue) output = false {
+
+        var capturedExpectedValue = arguments.expectedValue;
+
+        var testFn = (string value) => {
+            return variables.ignoreCase
+                ? compareNoCase(arguments.value, capturedExpectedValue) == 0
+                : compare(arguments.value, capturedExpectedValue) == 0
+        };
+
+        var failMessage = variables.negated
+            ? "Expected string - #variables.ignoreCase ? "" : "not"# ignoring case - NOT to equal: #capturedExpectedValue#"
+            : "Expected string - #variables.ignoreCase ? "" : "not"# ignoring case - to equal: #capturedExpectedValue#";
+
+        variables.constraints.append(
+            new Constraint(
+                negated     = variables.negated,
+                testFn      = testFn,
+                failMessage = failMessage
+            )
         );
+
+        return this;
     }
 
-    public StringConstraint function Nothing() output = false {
+    public StringValue function Nothing() output = false {
 
-        var predicate = (required string value) => {
-
-            if (variables.discriminator == false && isNull(arguments.value)) {
-                return;
-            }
-
-            if (variables.discriminator == true && isNull(arguments.value)) {
-                throw("Expected a string to not be null, empty or consist entirely of whitespace but it is null", Assert::GetAssertionType());
-            }
-
-            var stringIsEmpty = trim(arguments.value).len() == 0;
-
-            if (stringIsEmpty && variables.discriminator == true) {
-                throw("Expected a string to have a value but it is empty or consists entirely of whitespace", Assert::GetAssertionType());
-            }
-
-            if (!stringIsEmpty && variables.discriminator == false) {
-                throw(
-                    "Expected string to be null, empty or consist entirely of whitespace but it has a length of #arguments.value.len()# and a value of: #arguments.value#",
-                    Assert::GetAssertionType()
-                );
-            }
-        }
-
-        return new StringConstraint(predicate);
-    }
-
-    public StringConstraint function EqualTo(required string expectedValue) output = false {
-
-        var outerArgs = arguments;
-        var predicate = (required string value) => {
-
-            if (variables.discriminator == false && isNull(arguments.value)) {
-                throw(
-                    "Expected a string to equal another string in value but it is null",
-                    Assert::GetAssertionType()
-                );
-            }
-
-            var valuesAreEqual = outerArgs.expectedValue == arguments.value;
-
-            if (!valuesAreEqual && variables.discriminator == false) {
-                ThrowHelper(
-                    "Expected a string to equal another string in value but they differ",
-                    outerArgs.expectedValue,
-                    arguments.value
-                );
-            }
-
-            if (valuesAreEqual && variables.discriminator == true) {
-                ThrowHelper(
-                    "Expected a string to not equal another string in value but they appear to be the same",
-                    outerArgs.expectedValue,
-                    arguments.value
-                );
-            }
+        var testFn = (string value) => {
+            return arguments.value.len() != 0;
         };
 
-        return new StringConstraint(predicate);
+        var failMessage = variables.negated
+            ? "Expected string NOT to be nothing (empty or consisting entirely of whitespace)"
+            : "Expected string to be nothing (empty or consisting entirely of whitespace)"
+
+        variables.constraints.append(
+            new Constraint(
+                negated     = variables.negated,
+                testFn      = testFn,
+                failMessage = failMessage
+            )
+        );
+
+        return this;
     }
 
-    public StringConstraint function Containing(required string expectedValue) output = false {
+    public StringValue function StartingWith(required string expectedValue) output = false {
 
-        var outerArgs = arguments;
-        var predicate = (required string value) => {
+        var capturedExpectedValue = arguments.expectedValue;
 
-            if (variables.discriminator == false && isNull(arguments.value)) {
-                throw(
-                    "Expected a string to contain a certain value but it is null",
-                    Assert::GetAssertionType()
-                );
-            }
-
-            var valueContainsExpected = find(outerArgs.expectedValue, arguments.value, 0) > 0;
-
-            if (!valueContainsExpected && variables.discriminator == false) {
-                ThrowHelper(
-                    "Expected a string to contain a certain value but it does not",
-                    outerArgs.expectedValue,
-                    arguments.value
-                );
-            }
-
-            if (valueContainsExpected && variables.discriminator == true) {
-                ThrowHelper(
-                    "Expected a string to not contain a certain value but it does",
-                    outerArgs.expectedValue,
-                    arguments.value
-                );
-            }
+        var testFn = (string value) => {
+            return variables.ignoreCase
+                ? findNoCase(capturedExpectedValue, arguments.value) == 1
+                : find(capturedExpectedValue, arguments.value) == 1
         };
 
-        return new StringConstraint(predicate);
+        var failMessage = variables.negated
+            ? "Expected string - #variables.ignoreCase ? "" : "not"# ignoring case - NOT to start with: #capturedExpectedValue#"
+            : "Expected string - #variables.ignoreCase ? "" : "not"# ignoring case - to start with: #capturedExpectedValue#";
+
+        variables.constraints.append(
+            new Constraint(
+                negated     = variables.negated,
+                testFn      = testFn,
+                failMessage = failMessage
+            )
+        );
+
+        return this;
     }
 
-    public StringConstraint function StartingWith(required string expectedValue) output = false {
+    public StringValue function EndingWith(required string expectedValue) output = true {
 
-        var outerArgs = arguments;
-        var predicate = (required string value) => {
+        var capturedExpectedValue = arguments.expectedValue;
 
-            if (variables.discriminator == false && isNull(arguments.value)) {
-                throw(
-                    "Expected a string to start with a certain value but it is null",
-                    Assert::GetAssertionType()
-                );
-            }
-
-            var valueStartsWithExpected = find(outerArgs.expectedValue, arguments.value, 0) == 1;
-
-            if (!valueStartsWithExpected && variables.discriminator == false) {
-                ThrowHelper(
-                    "Expected a string to start with a certain value but it does not",
-                    outerArgs.expectedValue,
-                    arguments.value
-                );
-            }
-
-            if (valueStartsWithExpected && variables.discriminator == true) {
-                ThrowHelper(
-                    "Expected a string to not start with a certain value but it does",
-                    outerArgs.expectedValue,
-                    arguments.value
-                );
-            }
+        var testFn = (string value) => {
+            var endOfString = right(arguments.value, len(capturedExpectedValue));
+            return variables.ignoreCase
+                ? compareNoCase(endOfString, capturedExpectedValue) == 0
+                : compare(endOfString, capturedExpectedValue) == 0
         };
 
-        return new StringConstraint(predicate);
+        var failMessage = variables.negated
+            ? "Expected string - #variables.ignoreCase ? "" : "not"# ignoring case - NOT to end with: #capturedExpectedValue#"
+            : "Expected string - #variables.ignoreCase ? "" : "not"# ignoring case - to end with: #capturedExpectedValue#";
+
+        variables.constraints.append(
+            new Constraint(
+                negated     = variables.negated,
+                testFn      = testFn,
+                failMessage = failMessage
+            )
+        );
+
+        return this;
     }
 
-    public StringConstraint function EndingWith(required string expectedValue) output = false {
+    public StringValue function Containing(required string expectedValue) output = false {
 
-        var outerArgs = arguments;
-        var predicate = (required string value) => {
+        var capturedExpectedValue = arguments.expectedValue;
 
-            if (variables.discriminator == false && isNull(arguments.value)) {
-                throw(
-                    "Expected a string to end with a certain value but it is null",
-                    Assert::GetAssertionType()
-                );
-            }
-
-            var valueEndsWithExpected = right(arguments.value, len(outerArgs.expectedValue)) == outerArgs.expectedValue;
-
-            if (!valueEndsWithExpected && variables.discriminator == false) {
-                ThrowHelper(
-                    "Expected a string to end with a certain value but it does not",
-                    outerArgs.expectedValue,
-                    arguments.value
-                );
-            }
-
-            if (valueEndsWithExpected && variables.discriminator == true) {
-                ThrowHelper(
-                    "Expected a string to not end with a certain value but it does",
-                    outerArgs.expectedValue,
-                    arguments.value
-                );
-            }
+        var testFn = (string value) => {
+            return variables.ignoreCase
+                ? findNoCase(capturedExpectedValue, arguments.value) > 0
+                : find(capturedExpectedValue, arguments.value) > 0
         };
 
-        return new StringConstraint(predicate);
+        var failMessage = variables.negated
+            ? "Expected string - #variables.ignoreCase ? "" : "not"# ignoring case - NOT to contain: #capturedExpectedValue#"
+            : "Expected string - #variables.ignoreCase ? "" : "not"# ignoring case - to contain: #capturedExpectedValue#";
+
+        variables.constraints.append(
+            new Constraint(
+                negated     = variables.negated,
+                testFn      = testFn,
+                failMessage = failMessage
+            )
+        );
+
+        return this;
     }
 
-    public StringConstraint function Matching(required string expectedValue) output = false {
+    public StringValue function Matching(required string expectedValue) output = false {
 
-        var outerArgs = arguments;
-        var predicate = (required string value) => {
+        var capturedExpectedValue = arguments.expectedValue;
 
-            if (variables.discriminator == false && isNull(arguments.value)) {
-                throw(
-                    "Expected a string to match a certain pattern but it is null",
-                    Assert::GetAssertionType()
-                );
-            }
-
-            var valueMeetsExpectedResult = reMatch(outerArgs.expectedValue, arguments.value).len() > 0;
-
-            if (!valueMeetsExpectedResult && variables.discriminator == false) {
-                ThrowHelper(
-                    "Expected a string to match a certain pattern but it does not",
-                    outerArgs.expectedValue,
-                    arguments.value
-                );
-            }
-
-            if (valueMeetsExpectedResult && variables.discriminator == true) {
-                ThrowHelper(
-                    "Expected a string to not match a certain pattern but it does",
-                    outerArgs.expectedValue,
-                    arguments.value
-                );
-            }
+        var testFn = (string value) => {
+            return variables.ignoreCase
+                ? reMatchNoCase(capturedExpectedValue, arguments.value).len() > 0
+                : reMatch(capturedExpectedValue, arguments.value).len() > 0
         };
 
-        return new StringConstraint(predicate);
+        var failMessage = variables.negated
+            ? "Expected string - #variables.ignoreCase ? "" : "not"# ignoring case - NOT to match: #capturedExpectedValue#"
+            : "Expected string - #variables.ignoreCase ? "" : "not"# ignoring case - to match: #capturedExpectedValue#";
+
+        variables.constraints.append(
+            new Constraint(
+                negated     = variables.negated,
+                testFn      = testFn,
+                failMessage = failMessage
+            )
+        );
+
+        return this;
     }
 }

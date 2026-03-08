@@ -1,11 +1,11 @@
 Any
 {
-    ✅ Throwing()
-    ✅ String()
-    ✅ Numeric()
-    ✅ Boolean()
-    ✅ Array()
-    ✅ Struct()
+    ❌ Throwing()
+    ❌ String()
+    ❌ Numeric()
+    ❌ Boolean()
+    ❌ Array()
+    ❌ Struct()
 }
 
 ######################################################################################################
@@ -13,7 +13,7 @@ Any
 String
 {
     ❌ IgnoringWhitespace()
-    ❌ IgnoringCasing()
+    ✅ IgnoringCasing()
     ✅ Nothing()
     ✅ EqualTo()
     ✅ StartingWith()
@@ -26,19 +26,19 @@ String
 
 Number
 {
-    ✅ Zero()
-    ✅ LessThanOrEqualToZero()
-    ✅ LessThan()
-    ✅ GreaterThan()
-    ✅ EqualTo()
+    ❌ Zero()
+    ❌ LessThanOrEqualToZero()
+    ❌ LessThan()
+    ❌ GreaterThan()
+    ❌ EqualTo()
 }
 
 ######################################################################################################
 
 Array
 {
-    ✅ Empty()
-    ✅ SatisfiedByAny
+    ❌ Empty()
+    ❌ SatisfiedByAny
     ❌ SatisfiedByAll
     ❌ SimilarTo
     ❌ SequenceEqualTo
