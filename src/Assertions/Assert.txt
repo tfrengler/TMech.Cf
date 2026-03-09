@@ -1,18 +1,17 @@
 Any
 {
-    ❌ Throwing()
-    ❌ String()
-    ❌ Numeric()
-    ❌ Boolean()
-    ❌ Array()
-    ❌ Struct()
+    ✅ Throwing()
+    ✅ String()
+    ✅ Numeric()
+    ✅ Boolean()
+    ✅ Array()
+    ✅ Struct()
 }
 
 ######################################################################################################
 
 String
 {
-    ❌ IgnoringWhitespace()
     ✅ IgnoringCasing()
     ✅ Nothing()
     ✅ EqualTo()
@@ -26,23 +25,23 @@ String
 
 Number
 {
-    ❌ Zero()
-    ❌ LessThanOrEqualToZero()
-    ❌ LessThan()
-    ❌ GreaterThan()
-    ❌ EqualTo()
+    ✅ Zero()
+    ✅ LessThanOrEqualToZero()
+    ✅ LessThan()
+    ✅ GreaterThan()
+    ✅ EqualTo()
 }
 
 ######################################################################################################
 
 Array
 {
-    ❌ Empty()
-    ❌ SatisfiedByAny
-    ❌ SatisfiedByAll
-    ❌ SimilarTo
-    ❌ SequenceEqualTo
-    ❌ Containing
+    ✅ Empty()
+    ✅ SatisfiedByAny
+    ✅ SatisfiedByAll
+    ✅ SimilarTo
+    ✅ SequenceEqualTo
+    ✅ Containing
 }
 
 ######################################################################################################

@@ -2,7 +2,7 @@ component displayname="StringValue" extends="ConstraintChain" modifier="final" o
 
     property name="ignoreCase" type="boolean" getter="true" setter="false";
 
-    private StringValue function init(required boolean negated) {
+    private StringValue function Init(required boolean negated) output = false {
         super.init(arguments.negated);
         variables.ignoreCase = false;
         return this;
@@ -37,9 +37,10 @@ component displayname="StringValue" extends="ConstraintChain" modifier="final" o
 
         variables.constraints.append(
             new Constraint(
-                negated     = variables.negated,
-                testFn      = testFn,
-                failMessage = failMessage
+                negated         = variables.negated,
+                testFn          = testFn,
+                failMessage     = failMessage,
+                exceptionType   = "String"
             )
         );
 
@@ -58,9 +59,10 @@ component displayname="StringValue" extends="ConstraintChain" modifier="final" o
 
         variables.constraints.append(
             new Constraint(
-                negated     = variables.negated,
-                testFn      = testFn,
-                failMessage = failMessage
+                negated         = variables.negated,
+                testFn          = testFn,
+                failMessage     = failMessage,
+                exceptionType   = "String"
             )
         );
 
@@ -83,16 +85,17 @@ component displayname="StringValue" extends="ConstraintChain" modifier="final" o
 
         variables.constraints.append(
             new Constraint(
-                negated     = variables.negated,
-                testFn      = testFn,
-                failMessage = failMessage
+                negated         = variables.negated,
+                testFn          = testFn,
+                failMessage     = failMessage,
+                exceptionType   = "String"
             )
         );
 
         return this;
     }
 
-    public StringValue function EndingWith(required string expectedValue) output = true {
+    public StringValue function EndingWith(required string expectedValue) output = false {
 
         var capturedExpectedValue = arguments.expectedValue;
 
@@ -109,9 +112,10 @@ component displayname="StringValue" extends="ConstraintChain" modifier="final" o
 
         variables.constraints.append(
             new Constraint(
-                negated     = variables.negated,
-                testFn      = testFn,
-                failMessage = failMessage
+                negated         = variables.negated,
+                testFn          = testFn,
+                failMessage     = failMessage,
+                exceptionType   = "String"
             )
         );
 
@@ -134,9 +138,10 @@ component displayname="StringValue" extends="ConstraintChain" modifier="final" o
 
         variables.constraints.append(
             new Constraint(
-                negated     = variables.negated,
-                testFn      = testFn,
-                failMessage = failMessage
+                negated         = variables.negated,
+                testFn          = testFn,
+                failMessage     = failMessage,
+                exceptionType   = "String"
             )
         );
 
@@ -159,9 +164,10 @@ component displayname="StringValue" extends="ConstraintChain" modifier="final" o
 
         variables.constraints.append(
             new Constraint(
-                negated     = variables.negated,
-                testFn      = testFn,
-                failMessage = failMessage
+                negated         = variables.negated,
+                testFn          = testFn,
+                failMessage     = failMessage,
+                exceptionType   = "String"
             )
         );
 
