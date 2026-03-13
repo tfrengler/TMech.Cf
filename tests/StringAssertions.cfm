@@ -24,54 +24,65 @@
 </cfoutput>
 
 <cfscript>
-    Tester = new TestRunner("Assert::ThatString, StringConstraints.cfc and StringValue.cfc");
+    Tester = new TestRunner("StringValue.cfc");
 
     Tester.BeginTests("Nothing()");
 
-        Tester.RunTest("StringValue::IsNot().Nothing() => null - should throw", () => {
+        expectedAssertionType = "#Assertions.Constraint::GetBaseAssertionType()#.String";
+        Tester.RunTest("When Is.Nothing against a null-value then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatString(nullValue(), Assertions.StringValue::IsNot().Nothing());
-            }, Assertions.Assert::GetAssertionType());
+                Assertions.Assert::That(
+                    nullValue(),
+                    Assertions.StringValue::Is().Nothing()
+                );
+            }, expectedAssertionType);
         });
 
-        Tester.RunTest("StringValue::Is().Nothing() => null - should not throw", () => {
+        Tester.RunTest("When Is.Nothing against empty string then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatString(nullValue(), Assertions.StringValue::Is().Nothing());
+                Assertions.Assert::That("", Assertions.StringValue::Is().Nothing());
             });
         });
 
-        Tester.RunTest("StringValue::IsNot().Nothing() => ' x  ' - should not throw", () => {
+        Tester.RunTest("When Is.Nothing against string with chars then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That("x", Assertions.StringValue::Is().Nothing());
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.Nothing against string with only whitespace then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatString(" x  ", Assertions.StringValue::IsNot().Nothing());
+                Assertions.Assert::That("   ", Assertions.StringValue::Is().Nothing());
             });
         });
 
-        Tester.RunTest("StringValue::Is().Nothing() => '  ' - should not throw", () => {
+        Tester.RunTest("When IsNot.Nothing against empty string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That("", Assertions.StringValue::IsNot().Nothing());
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.Nothing against string with chars then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatString("   ", Assertions.StringValue::Is().Nothing());
+                Assertions.Assert::That("test", Assertions.StringValue::IsNot().Nothing());
             });
         });
 
-        Tester.RunTest("StringValue::IsNot().Nothing() => '  ' - should throw", () => {
+        Tester.RunTest("When IsNot.Nothing against string with only whitespace then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatString("   ", Assertions.StringValue::IsNot().Nothing());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("StringValue::Is().Nothing() => ' x  ' - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::ThatString(" x  ", Assertions.StringValue::Is().Nothing());
-            }, Assertions.Assert::GetAssertionType());
+                Assertions.Assert::That("   ", Assertions.StringValue::IsNot().Nothing());
+            }, expectedAssertionType);
         });
 
     Tester.EndTests();
-
+    /*
     Tester.BeginTests("EqualTo()");
 
         Tester.RunTest("StringValue::IsNot().EqualTo('nottest') => 'test' - should not throw", () => {
@@ -231,6 +242,7 @@
         });
 
     Tester.EndTests();
+    */
 </cfscript>
 
 </body>

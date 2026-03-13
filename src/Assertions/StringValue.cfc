@@ -50,7 +50,7 @@ component displayname="StringValue" extends="ConstraintChain" modifier="final" o
     public StringValue function Nothing() output = false {
 
         var testFn = (string value) => {
-            return arguments.value.len() != 0;
+            return arguments.value.trim().len() == 0;
         };
 
         var failMessage = variables.negated

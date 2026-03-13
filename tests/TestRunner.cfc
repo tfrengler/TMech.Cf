@@ -33,7 +33,7 @@ component displayname="TestRunner" modifier="final" output="true" accessors="fal
             writeOutput("<h4 style='display:block;background-color:green;color:white'>OK: #arguments.name# (#getTickCount() - Start# ms)</h4>");
         }
         catch(error) {
-            var StackTrace = arrayLast(callStackGet("array"));
+            var StackTrace = callStackGet("array");
             variables.Failures.append({
                 "Name": arguments.name,
                 "Message": error.Message,
