@@ -100,6 +100,8 @@ component displayname="StringValue" extends="ConstraintChain" modifier="final" o
         var capturedExpectedValue = arguments.expectedValue;
 
         var testFn = (string value) => {
+            if (capturedExpectedValue.len() == 0) return true;
+
             var endOfString = right(arguments.value, len(capturedExpectedValue));
             return variables.ignoreCase
                 ? compareNoCase(endOfString, capturedExpectedValue) == 0

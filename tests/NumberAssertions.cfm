@@ -24,107 +24,176 @@
 </cfoutput>
 
 <cfscript>
-    Tester = new TestRunner("Assert::ThatNumber, NumberConstraint.cfc and NumberValue.cfc");
+    Tester = new TestRunner("NumberValue.cfc");
+    expectedAssertionType = "#Assertions.Constraint::GetBaseAssertionType()#.Number";
 
     Tester.BeginTests("EqualTo()");
 
-        Tester.RunTest("NumberValue::Is().EqualTo(2) => 4 - should throw", () => {
+        Tester.RunTest("When Is.EqualTo against 2 when value is 3 then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatNumber(2, Assertions.NumberValue::Is().EqualTo(4));
-            }, Assertions.Assert::GetAssertionType());
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::Is().EqualTo(3)
+                );
+            }, expectedAssertionType);
         });
 
-        Tester.RunTest("NumberValue::IsNot().EqualTo(4) => 4 - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::ThatNumber(4, Assertions.NumberValue::IsNot().EqualTo(4));
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("NumberValue::Is().EqualTo(4) => 4 - should not throw", () => {
+        Tester.RunTest("When Is.EqualTo against 2 when value is 2 then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatNumber(4, Assertions.NumberValue::Is().EqualTo(4));
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::Is().EqualTo(2)
+                );
             });
         });
 
-        Tester.RunTest("NumberValue::IsNot().EqualTo(2) => 4 - should not throw", () => {
+        Tester.RunTest("When IsNot.EqualTo against 2 when value is 3 then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatNumber(2, Assertions.NumberValue::IsNot().EqualTo(4));
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::IsNot().EqualTo(3)
+                );
             });
         });
 
-    Tester.EndTests();
-
-    Tester.BeginTests("Zero()");
-
-        Tester.RunTest("NumberValue::Is().Zero() => 4 - should throw", () => {
+        Tester.RunTest("When IsNot.EqualTo against 2 when value is 2 then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatNumber(4, Assertions.NumberValue::Is().Zero());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("NumberValue::IsNot().Zero() => 0 - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::ThatNumber(0, Assertions.NumberValue::IsNot().Zero());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("NumberValue::Is().Zero() => 0 - should not throw", () => {
-
-            Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatNumber(0, Assertions.NumberValue::Is().Zero());
-            });
-        });
-
-        Tester.RunTest("NumberValue::IsNot().Zero() => 4 - should not throw", () => {
-
-            Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatNumber(4, Assertions.NumberValue::IsNot().Zero());
-            });
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::IsNot().EqualTo(2)
+                );
+            }, expectedAssertionType);
         });
 
     Tester.EndTests();
 
     Tester.BeginTests("LessThanOrEqualToZero()");
 
-        Tester.RunTest("NumberValue::Is().LessThanOrEqualToZero() => 1 - should throw", () => {
+        Tester.RunTest("When Is.LessThanOrEqualToZero when value is 1 then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatNumber(1, Assertions.NumberValue::Is().LessThanOrEqualToZero());
-            }, Assertions.Assert::GetAssertionType());
+                Assertions.Assert::That(
+                    1,
+                    Assertions.NumberValue::Is().LessThanOrEqualToZero()
+                );
+            }, expectedAssertionType);
         });
 
-        Tester.RunTest("NumberValue::IsNot().LessThanOrEqualToZero() => 0 and -1 - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::ThatNumber(0, Assertions.NumberValue::IsNot().LessThanOrEqualToZero());
-            }, Assertions.Assert::GetAssertionType());
-
-            Assert::Throws(() => {
-                Assertions.Assert::ThatNumber(-1, Assertions.NumberValue::IsNot().LessThanOrEqualToZero());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("NumberValue::Is().LessThanOrEqualToZero() => 0 and -1 - should not throw", () => {
+        Tester.RunTest("When Is.LessThanOrEqualToZero when value is 0 then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatNumber(0, Assertions.NumberValue::Is().LessThanOrEqualToZero());
-            });
-
-            Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatNumber(-1, Assertions.NumberValue::Is().LessThanOrEqualToZero());
+                Assertions.Assert::That(
+                    0,
+                    Assertions.NumberValue::Is().LessThanOrEqualToZero()
+                );
             });
         });
 
-        Tester.RunTest("NumberValue::IsNot().LessThanOrEqualToZero() => 1 - should not throw", () => {
+        Tester.RunTest("When Is.LessThanOrEqualToZero when value is -1 then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatNumber(1, Assertions.NumberValue::IsNot().LessThanOrEqualToZero());
+                Assertions.Assert::That(
+                    -1,
+                    Assertions.NumberValue::Is().LessThanOrEqualToZero()
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.LessThanOrEqualToZero value is 1 then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    1,
+                    Assertions.NumberValue::IsNot().LessThanOrEqualToZero()
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.LessThanOrEqualToZero when value is 0 then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    0,
+                    Assertions.NumberValue::IsNot().LessThanOrEqualToZero()
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.LessThanOrEqualToZero when value is -1 then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    -1,
+                    Assertions.NumberValue::IsNot().LessThanOrEqualToZero()
+                );
+            }, expectedAssertionType);
+        });
+
+    Tester.EndTests();
+
+    Tester.BeginTests("Zero()");
+
+        Tester.RunTest("When Is.Zero when value is 1 then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    1,
+                    Assertions.NumberValue::Is().Zero()
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.Zero when value is 0 then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    0,
+                    Assertions.NumberValue::Is().Zero()
+                );
+            });
+        });
+
+        Tester.RunTest("When Is.Zero when value is -1 then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    -1,
+                    Assertions.NumberValue::Is().Zero()
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.Zero when value is 1 then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    1,
+                    Assertions.NumberValue::IsNot().Zero()
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.Zero when value is 0 then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    0,
+                    Assertions.NumberValue::IsNot().Zero()
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.Zero when value is -1 then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    -1,
+                    Assertions.NumberValue::IsNot().Zero()
+                );
             });
         });
 
@@ -132,88 +201,202 @@
 
     Tester.BeginTests("LessThan()");
 
-        Tester.RunTest("NumberValue::Is().LessThan(2) => 1 - should not throw", () => {
+        Tester.RunTest("When Is.LessThan against 2 when value is 3 then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatNumber(1, Assertions.NumberValue::Is().LessThan(2));
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::Is().LessThan(3)
+                );
             });
         });
 
-        Tester.RunTest("NumberValue::Is().LessThan(2) => 3 - should throw", () => {
+        Tester.RunTest("When Is.LessThan against 2 when value is 2 then throw", () => {
 
-            var errorMessage = Assert::Throws(() => {
-                    Assertions.Assert::ThatNumber(3, Assertions.NumberValue::Is().LessThan(2));
-                },
-                Assertions.Assert::GetAssertionType()
-            );
-
-            if (errorMessage != "Expected value to be less than 2 but it is 3") {
-                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-            }
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::Is().LessThan(2)
+                );
+            }, expectedAssertionType);
         });
 
-        Tester.RunTest("NumberValue::IsNot().LessThan(2) => 3 - should not throw", () => {
+        Tester.RunTest("When Is.LessThan against 2 when value is 1 then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::Is().LessThan(1)
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.LessThan against 2 when value is 3 then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::IsNot().LessThan(3)
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.LessThan against 2 when value is 2 then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatNumber(3, Assertions.NumberValue::IsNot().LessThan(2));
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::IsNot().LessThan(2)
+                );
             });
         });
 
-        Tester.RunTest("NumberValue::IsNot().LessThan(2) => 1 - should throw", () => {
+        Tester.RunTest("When IsNot.LessThan against 2 when value is 1 then pass", () => {
 
-            var errorMessage = Assert::Throws(() => {
-                    Assertions.Assert::ThatNumber(1, Assertions.NumberValue::IsNot().LessThan(2));
-                },
-                Assertions.Assert::GetAssertionType()
-            );
-
-            if (errorMessage != "Expected value to not be less than 2 but it is 1") {
-                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-            }
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::IsNot().LessThan(1)
+                );
+            });
         });
 
     Tester.EndTests();
 
     Tester.BeginTests("GreaterThan()");
 
-        Tester.RunTest("NumberValue::Is().GreaterThan(1) => 2 - should not throw", () => {
+        Tester.RunTest("When Is.GreaterThan against 3 when value is 2 then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatNumber(2, Assertions.NumberValue::Is().GreaterThan(1));
+                Assertions.Assert::That(
+                    3,
+                    Assertions.NumberValue::Is().GreaterThan(2)
+                );
             });
         });
 
-        Tester.RunTest("NumberValue::Is().GreaterThan(2) => 1 - should throw", () => {
+        Tester.RunTest("When Is.GreaterThan against 2 when value is 2 then throw", () => {
 
-            var errorMessage = Assert::Throws(() => {
-                    Assertions.Assert::ThatNumber(1, Assertions.NumberValue::Is().GreaterThan(2));
-                },
-                Assertions.Assert::GetAssertionType()
-            );
-
-            if (errorMessage != "Expected value to be greater than 2 but it is 1") {
-                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-            }
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::Is().GreaterThan(2)
+                );
+            }, expectedAssertionType);
         });
 
-        Tester.RunTest("NumberValue::IsNot().GreaterThan(2) => 1 - should not throw", () => {
+        Tester.RunTest("When Is.GreaterThan against 1 when value is 2 then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    1,
+                    Assertions.NumberValue::Is().GreaterThan(2)
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.GreaterThan against 3 when value is 2 then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    3,
+                    Assertions.NumberValue::IsNot().GreaterThan(2)
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.GreaterThan against 2 when value is 2 then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatNumber(1, Assertions.NumberValue::IsNot().GreaterThan(2));
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::IsNot().GreaterThan(2)
+                );
             });
         });
 
-        Tester.RunTest("NumberValue::IsNot().GreaterThan(1) => 2 - should throw", () => {
+        Tester.RunTest("When IsNot.GreaterThan against 2 when value is 1 then pass", () => {
 
-            var errorMessage = Assert::Throws(() => {
-                    Assertions.Assert::ThatNumber(2, Assertions.NumberValue::IsNot().GreaterThan(1));
-                },
-                Assertions.Assert::GetAssertionType()
-            );
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    1,
+                    Assertions.NumberValue::IsNot().GreaterThan(2)
+                );
+            });
+        });
 
-            if (errorMessage != "Expected value to not be greater than 1 but it is 2") {
-                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-            }
+    Tester.EndTests();
+
+    Tester.BeginTests("Between()");
+
+        Tester.RunTest("When Is.Between against 2 when values are 1 and 3 then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::Is().Between(1,3)
+                );
+            });
+        });
+
+        Tester.RunTest("When Is.Between against 3 when values are 1 and 3 then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    3,
+                    Assertions.NumberValue::Is().Between(1,3)
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.Between against 1 when values are 1 and 3 then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    1,
+                    Assertions.NumberValue::Is().Between(1,3)
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.Between against 2 when values are 1 and 3 then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::IsNot().Between(1,3)
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.Between against 3 when values are 1 and 3 then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    3,
+                    Assertions.NumberValue::IsNot().Between(1,3)
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.Between against 1 when values are 1 and 3 then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    1,
+                    Assertions.NumberValue::IsNot().Between(1,3)
+                );
+            });
+        });
+
+        Tester.RunTest("When Is.Between against 2 when values are 3 and 1 then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    2,
+                    Assertions.NumberValue::Is().Between(3,1)
+                );
+            }, expectedAssertionType);
         });
 
     Tester.EndTests();

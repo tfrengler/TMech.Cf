@@ -15,7 +15,7 @@ component displayname="ArrayValue" extends="ConstraintChain" modifier="final" ou
 
     /**
      * @hint Asserts that an array is empty, meaning its length is zero and has no items in it.
-     * An array fill of null-values is not considered empty.
+     * An array full of null-values is not considered empty.
      */
     public ArrayValue function Empty() output = false {
 

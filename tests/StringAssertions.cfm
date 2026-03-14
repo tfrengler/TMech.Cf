@@ -25,10 +25,10 @@
 
 <cfscript>
     Tester = new TestRunner("StringValue.cfc");
+    expectedAssertionType = "#Assertions.Constraint::GetBaseAssertionType()#.String";
 
     Tester.BeginTests("Nothing()");
 
-        expectedAssertionType = "#Assertions.Constraint::GetBaseAssertionType()#.String";
         Tester.RunTest("When Is.Nothing against a null-value then throw", () => {
 
             Assert::Throws(() => {
@@ -82,167 +82,496 @@
         });
 
     Tester.EndTests();
-    /*
+
     Tester.BeginTests("EqualTo()");
 
-        Tester.RunTest("StringValue::IsNot().EqualTo('nottest') => 'test' - should not throw", () => {
+        Tester.RunTest("When Is.EqualTo against an empty string with a non-empty string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "",
+                    Assertions.StringValue::Is().EqualTo("test")
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.EqualTo against an empty string with an empty string then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::IsNot().EqualTo("nottest"));
+                Assertions.Assert::That(
+                    "",
+                    Assertions.StringValue::Is().EqualTo("")
+                );
             });
         });
 
-        Tester.RunTest("StringValue::Is().EqualTo('test') => 'test' - should not throw", () => {
+        Tester.RunTest("When Is.EqualTo against a non-empty string with a matching string then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::Is().EqualTo("test"));
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::Is().EqualTo("test")
+                );
             });
         });
 
-        Tester.RunTest("StringValue::IsNot().EqualTo('test') => 'test' - should throw", () => {
+        Tester.RunTest("When Is.EqualTo against a non-empty uppercase string with a matching but lowercase string then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::IsNot().EqualTo("test"));
-            }, Assertions.Assert::GetAssertionType());
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::Is().EqualTo("TEST")
+                );
+            }, expectedAssertionType);
         });
 
-        Tester.RunTest("StringValue::Is().EqualTo('nottest') => 'test' - should throw", () => {
+        Tester.RunTest("When Is.EqualTo.IgnoringCase against a non-empty uppercase string with a matching but lowercase string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::Is().IgnoringCase().EqualTo("TEST")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.EqualTo against an empty string with a non-empty string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "",
+                    Assertions.StringValue::IsNot().EqualTo("test")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.EqualTo against an empty string with an empty string then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::Is().EqualTo("nottest"));
-            }, Assertions.Assert::GetAssertionType());
+                Assertions.Assert::That(
+                    "",
+                    Assertions.StringValue::IsNot().EqualTo("")
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.EqualTo against a non-empty string with a matching string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::IsNot().EqualTo("test")
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.EqualTo against a non-empty uppercase string with a matching but lowercase string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::IsNot().EqualTo("TEST")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.EqualTo.IgnoringCase against a non-empty uppercase string with a matching but lowercase string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::IsNot().IgnoringCase().EqualTo("TEST")
+                );
+            }, expectedAssertionType);
         });
 
     Tester.EndTests();
 
     Tester.BeginTests("Containing()");
 
-        Tester.RunTest("StringValue::Is().Containing('es') => 'test' - should not throw", () => {
+        Tester.RunTest("When Is.Containing against an empty string with a non-empty string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "",
+                    Assertions.StringValue::Is().Containing("test")
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.Containing against an empty string with an empty string then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::Is().Containing("es"));
+                Assertions.Assert::That(
+                    "",
+                    Assertions.StringValue::Is().Containing("")
+                );
             });
         });
 
-        Tester.RunTest("StringValue::IsNot().Containing('x') => 'test' - should not throw", () => {
+        Tester.RunTest("When Is.Containing against a non-empty string with a matching sub-string then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::IsNot().Containing("x"));
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::Is().Containing("es")
+                );
             });
         });
 
-        Tester.RunTest("StringValue::Is().Containing('x') => 'test' - should throw", () => {
+        Tester.RunTest("When Is.Containing against a non-empty uppercase string with a matching but lowercase sub-string then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::Is().Containing("x"));
-            }, Assertions.Assert::GetAssertionType());
+                Assertions.Assert::That(
+                    "TEST",
+                    Assertions.StringValue::Is().Containing("es")
+                );
+            }, expectedAssertionType);
         });
 
-        Tester.RunTest("StringValue::IsNot().Containing('es') => 'test' - should throw", () => {
+        Tester.RunTest("When Is.Containing.IgnoringCase against a non-empty uppercase string with a matching but lowercase sub-string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "TEST",
+                    Assertions.StringValue::Is().IgnoringCase().Containing("es")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.Containing against an empty string with a non-empty string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "",
+                    Assertions.StringValue::IsNot().Containing("test")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.Containing against an empty string with an empty string then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::IsNot().Containing("es"));
-            }, Assertions.Assert::GetAssertionType());
+                Assertions.Assert::That(
+                    "",
+                    Assertions.StringValue::IsNot().Containing("")
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.Containing against a non-empty string with a matching sub-string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::IsNot().Containing("es")
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.Containing against a non-empty uppercase string with a matching but lowercase sub-string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "TEST",
+                    Assertions.StringValue::IsNot().Containing("es")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.Containing.IgnoringCase against a non-empty uppercase string with a matching but lowercase sub-string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "TEST",
+                    Assertions.StringValue::IsNot().IgnoringCase().Containing("es")
+                );
+            }, expectedAssertionType);
         });
 
     Tester.EndTests();
 
     Tester.BeginTests("StartingWith()");
 
-        Tester.RunTest("StringValue::Is().StartingWith('te') => 'test' - should not throw", () => {
+        Tester.RunTest("When Is.StartingWith against an empty string with an empty string then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::Is().StartingWith("te"));
+                Assertions.Assert::That(
+                    "",
+                    Assertions.StringValue::Is().StartingWith("")
+                );
             });
         });
 
-        Tester.RunTest("StringValue::IsNot().StartingWith('tx') => 'test' - should not throw", () => {
+        Tester.RunTest("When Is.StartingWith against a non-empty string with a matching sub-string then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::IsNot().StartingWith("tx"));
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::Is().StartingWith("te")
+                );
             });
         });
 
-        Tester.RunTest("StringValue::Is().StartingWith('tx') => 'test' - should throw", () => {
+        Tester.RunTest("When Is.StartingWith against a non-empty string with a non-matching sub-string then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::Is().StartingWith("tx"));
-            }, Assertions.Assert::GetAssertionType());
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::Is().StartingWith("xy")
+                );
+            }, expectedAssertionType);
         });
 
-        Tester.RunTest("StringValue::IsNot().StartingWith('te') => 'test' - should throw", () => {
+        Tester.RunTest("When Is.StartingWith against a non-empty uppercase string with a matching but lowercase sub-string then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::IsNot().StartingWith("te"));
-            }, Assertions.Assert::GetAssertionType());
+                Assertions.Assert::That(
+                    "TEST",
+                    Assertions.StringValue::Is().StartingWith("te")
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.StartingWith.IgnoringCase against a non-empty uppercase string with a matching but lowercase sub-string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "TEST",
+                    Assertions.StringValue::Is().IgnoringCase().StartingWith("te")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.StartingWith against a non-empty string with a matching sub-string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::IsNot().StartingWith("te")
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.StartingWith against a non-empty string with a non-matching sub-string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::IsNot().StartingWith("xy")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.StartingWith against a non-empty uppercase string with a matching but lowercase sub-string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "TEST",
+                    Assertions.StringValue::IsNot().StartingWith("te")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.StartingWith.IgnoringCase against a non-empty uppercase string with a matching but lowercase sub-string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "TEST",
+                    Assertions.StringValue::IsNot().IgnoringCase().StartingWith("te")
+                );
+            }, expectedAssertionType);
         });
 
     Tester.EndTests();
 
     Tester.BeginTests("EndingWith()");
 
-        Tester.RunTest("StringValue::Is().EndingWith('st') => 'test' - should not throw", () => {
+        Tester.RunTest("When Is.EndingWith against an empty string with an empty string then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::Is().EndingWith("st"));
+                Assertions.Assert::That(
+                    "",
+                    Assertions.StringValue::Is().EndingWith("")
+                );
             });
         });
 
-        Tester.RunTest("StringValue::IsNot().EndingWith('xt') => 'test' - should not throw", () => {
+        Tester.RunTest("When Is.EndingWith against a non-empty string with a matching sub-string then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::IsNot().EndingWith("xt"));
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::Is().EndingWith("st")
+                );
             });
         });
 
-        Tester.RunTest("StringValue::Is().EndingWith('sx') => 'test' - should throw", () => {
+        Tester.RunTest("When Is.EndingWith against a non-empty string with a non-matching sub-string then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::Is().EndingWith("sx"));
-            }, Assertions.Assert::GetAssertionType());
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::Is().EndingWith("xy")
+                );
+            }, expectedAssertionType);
         });
 
-        Tester.RunTest("StringValue::IsNot().EndingWith('st') => 'test' - should throw", () => {
+        Tester.RunTest("When Is.EndingWith against a non-empty uppercase string with a matching but lowercase sub-string then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatString("test", Assertions.StringValue::IsNot().EndingWith("st"));
-            }, Assertions.Assert::GetAssertionType());
+                Assertions.Assert::That(
+                    "TEST",
+                    Assertions.StringValue::Is().EndingWith("st")
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.EndingWith.IgnoringCase against a non-empty uppercase string with a matching but lowercase sub-string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "TEST",
+                    Assertions.StringValue::Is().IgnoringCase().EndingWith("st")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.EndingWith against a non-empty string with a matching sub-string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::IsNot().EndingWith("st")
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.EndingWith against a non-empty string with a non-matching sub-string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.StringValue::IsNot().EndingWith("xy")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.EndingWith against a non-empty uppercase string with a matching but lowercase sub-string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "TEST",
+                    Assertions.StringValue::IsNot().EndingWith("st")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.EndingWith.IgnoringCase against a non-empty uppercase string with a matching but lowercase sub-string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "TEST",
+                    Assertions.StringValue::IsNot().IgnoringCase().EndingWith("st")
+                );
+            }, expectedAssertionType);
         });
 
     Tester.EndTests();
 
     Tester.BeginTests("Matching()");
 
-        Tester.RunTest("StringValue::Is().Matching('There's 1 number') => '\d num' - should not throw", () => {
+        Tester.RunTest("When Is.Matching against an empty string with an empty string then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatString("There's 1 number", Assertions.StringValue::Is().Matching("\d num"));
+                Assertions.Assert::That(
+                    "",
+                    Assertions.StringValue::Is().Matching("")
+                );
             });
         });
 
-        Tester.RunTest("StringValue::IsNot().Matching('There's 1 number') => '\d{2} num' - should not throw", () => {
+        Tester.RunTest("When Is.Matching against a non-empty string with a matching sub-string then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::ThatString("There's 1 number", Assertions.StringValue::IsNot().Matching("\d{2} num"));
+                Assertions.Assert::That(
+                    "te st",
+                    Assertions.StringValue::Is().Matching("\ss")
+                );
             });
         });
 
-        Tester.RunTest("StringValue::Is().Matching('There's 1 number') => '\d{2} num' - should throw", () => {
+        Tester.RunTest("When Is.Matching against a non-empty string with a non-matching sub-string then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatString("There's 1 number", Assertions.StringValue::Is().Matching("\d{2} num"));
-            }, Assertions.Assert::GetAssertionType());
+                Assertions.Assert::That(
+                    "te st",
+                    Assertions.StringValue::Is().Matching("\s{2}s")
+                );
+            }, expectedAssertionType);
         });
 
-        Tester.RunTest("StringValue::IsNot().Matching('There's 1 number') => '\d num' - should throw", () => {
+        Tester.RunTest("When Is.Matching against a non-empty uppercase string with a matching but lowercase sub-string then throw", () => {
 
             Assert::Throws(() => {
-                Assertions.Assert::ThatString("There's 1 number", Assertions.StringValue::IsNot().Matching("\d num"));
-            }, Assertions.Assert::GetAssertionType());
+                Assertions.Assert::That(
+                    "TE ST",
+                    Assertions.StringValue::Is().Matching("\ss")
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.Matching.IgnoringCase against a non-empty uppercase string with a matching but lowercase sub-string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "TE ST",
+                    Assertions.StringValue::Is().IgnoringCase().Matching("\ss")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.Matching against a non-empty string with a matching sub-string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "te st",
+                    Assertions.StringValue::IsNot().Matching("\ss")
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When IsNot.Matching against a non-empty string with a non-matching sub-string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "te st",
+                    Assertions.StringValue::IsNot().Matching("\sx")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.Matching against a non-empty uppercase string with a matching but lowercase sub-string then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "TE ST",
+                    Assertions.StringValue::IsNot().Matching("\ss")
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.Matching.IgnoringCase against a non-empty uppercase string with a matching but lowercase sub-string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "TE ST",
+                    Assertions.StringValue::IsNot().IgnoringCase().Matching("\ss")
+                );
+            }, expectedAssertionType);
         });
 
     Tester.EndTests();
-    */
 </cfscript>
 
 </body>
