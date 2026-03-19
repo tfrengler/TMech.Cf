@@ -5,6 +5,12 @@ component displayname="AnyValue" extends="ConstraintChain" modifier="final" outp
         return this;
     }
 
+    private string function GetType(required any value) output = false {
+        return !isObject(arguments.value)
+            ? arguments.value.getClass().getName()
+            : "CFC";
+    }
+
     public static AnyValue function Is() output = false {
         return new AnyValue(false);
     }
@@ -15,8 +21,8 @@ component displayname="AnyValue" extends="ConstraintChain" modifier="final" outp
 
     public AnyValue function String() output = false {
 
-        var testFn = (string value) => {
-            var actualType = arguments.value.getClass().getName();
+        var testFn = (any value) => {
+            var actualType = GetType(arguments.value);
             return actualType == "java.lang.String";
         };
 
@@ -39,7 +45,7 @@ component displayname="AnyValue" extends="ConstraintChain" modifier="final" outp
     public AnyValue function Numeric() output = false {
 
         var testFn = (any value) => {
-            var actualType = arguments.value.getClass().getName();
+            var actualType = GetType(arguments.value);
             return (
                 actualType == "java.lang.Long" ||
                 actualType == "java.lang.Double" ||
@@ -65,8 +71,9 @@ component displayname="AnyValue" extends="ConstraintChain" modifier="final" outp
     public AnyValue function Array() output = false {
 
         var testFn = (any value) => {
-            var actualType = arguments.value.getClass().getName();
-            return actualType == "lucee.runtime.type.ArrayImpl";
+            return isArray(arguments.value);
+            //var actualType = GetType(arguments.value);
+            //return actualType == "lucee.runtime.type.ArrayImpl";
         };
 
         var failMessage = variables.negated
@@ -88,7 +95,7 @@ component displayname="AnyValue" extends="ConstraintChain" modifier="final" outp
     public AnyValue function Struct() output = false {
 
         var testFn = (any value) => {
-            var actualType = arguments.value.getClass().getName();
+            var actualType = GetType(arguments.value);
             return actualType == "lucee.runtime.type.StructImpl";
         };
 
@@ -111,7 +118,7 @@ component displayname="AnyValue" extends="ConstraintChain" modifier="final" outp
     public AnyValue function Boolean() output = false {
 
         var testFn = (any value) => {
-            var actualType = arguments.value.getClass().getName();
+            var actualType = GetType(arguments.value);
             return actualType == "java.lang.Boolean";
         };
 
@@ -133,7 +140,15 @@ component displayname="AnyValue" extends="ConstraintChain" modifier="final" outp
 
     public AnyValue function Throwing() output = false {
 
-        var testFn = (function value) => {
+        var testFn = (any value) => {
+            if (!isCustomFunction(arguments.value)) {
+                throw(
+                    message = "Error determining if function throws because the value is not a function",
+                    //detail  = "minValueExclusive: #outerArgs.minValueExclusive# | maxValueExclusive: #outerArgs.maxValueExclusive#",
+                    type    = "#Constraint::GetBaseAssertionType()#.Any"
+                );
+            }
+
             try {
                 arguments.value();
                 return false;

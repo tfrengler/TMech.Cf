@@ -175,4 +175,26 @@ component displayname="StringValue" extends="ConstraintChain" modifier="final" o
 
         return this;
     }
+
+    public AnyValue function ValidJSON() output = false {
+
+        var testFn = (string value) => {
+            return IsJson(arguments.value);
+        };
+
+        var failMessage = variables.negated
+            ? "Expected string to NOT contain valid JSON"
+            : "Expected string to contain valid JSON";
+
+        variables.constraints.append(
+            new Constraint(
+                negated         = variables.negated,
+                testFn          = testFn,
+                failMessage     = failMessage,
+                exceptionType   = "Any"
+            )
+        );
+
+        return this;
+    }
 }

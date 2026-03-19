@@ -24,375 +24,193 @@
 </cfoutput>
 
 <cfscript>
-    Tester = new TestRunner("Assert::That, AnyConstraint.cfc and AnyValue.cfc");
+    expectedAssertionType = "#Assertions.Constraint::GetBaseAssertionType()#.Any";
+    Tester = new TestRunner("AnyValue.cfc");
+
+    Tester.BeginTests("Shared");
+
+        Tester.RunTest("When Is.String against a CFC then throw", () => {
+
+            Assert::Throws(() => {
+                var component = Assertions.AnyValue::Is();
+                Assertions.Assert::That(component, Assertions.AnyValue::Is().String());
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.String against a null-value then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(nullValue(), Assertions.AnyValue::Is().String());
+            }, expectedAssertionType);
+        });
+
+    Tester.EndTests();
 
     Tester.BeginTests("String()");
 
-        // NULL
-        Tester.RunTest("AnyValue::Is().String() => null - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That(null, Assertions.AnyValue::Is().String());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("AnyValue::IsNot().String() => null - should not throw", () => {
-
-            Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(null, Assertions.AnyValue::IsNot().String());
-            });
-        });
-
-        // SHOULD THROW
-        Tester.RunTest("AnyValue::Is().String()) => true - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That(true, Assertions.AnyValue::Is().String());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("AnyValue::IsNot().String()) => 'test' - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That("test", Assertions.AnyValue::IsNot().String());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        // SHOULD NOT THROW
-        Tester.RunTest("AnyValue::Is().String()) => 'test' - should not throw", () => {
+        Tester.RunTest("When Is.String against a string then pass", () => {
 
             Assert::DoesNotThrow(() => {
                 Assertions.Assert::That("test", Assertions.AnyValue::Is().String());
             });
         });
 
-        Tester.RunTest("AnyValue::IsNot().String()) => 42 - should not throw", () => {
+        Tester.RunTest("When IsNot.String against a string then throw", () => {
 
-            Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(2, Assertions.AnyValue::IsNot().String());
-            });
+            Assert::Throws(() => {
+                Assertions.Assert::That("test", Assertions.AnyValue::IsNot().String());
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.String against another type then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(1, Assertions.AnyValue::Is().String());
+            }, expectedAssertionType);
         });
 
     Tester.EndTests();
 
     Tester.BeginTests("Numeric()");
 
-        // NULL
-        Tester.RunTest("AnyValue::Is().Numeric() => null - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That(null, Assertions.AnyValue::Is().Numeric());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("AnyValue::IsNot().Numeric() => null - should not throw", () => {
+        Tester.RunTest("When Is.Numeric against a string then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(null, Assertions.AnyValue::IsNot().Numeric());
+                Assertions.Assert::That(1, Assertions.AnyValue::Is().Numeric());
             });
         });
 
-        // SHOULD THROW
-        Tester.RunTest("AnyValue::Is().Numeric()) => true - should throw", () => {
+        Tester.RunTest("When IsNot.Numeric against a string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(1, Assertions.AnyValue::IsNot().Numeric());
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.Numeric against another type then throw", () => {
 
             Assert::Throws(() => {
                 Assertions.Assert::That(true, Assertions.AnyValue::Is().Numeric());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("AnyValue::IsNot().Numeric()) => 4 - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That(4, Assertions.AnyValue::IsNot().Numeric());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("AnyValue::IsNot().Numeric()) => 42 - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That(42, Assertions.AnyValue::IsNot().Numeric());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("AnyValue::IsNot().Numeric()) => 42.3 - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That(42.3, Assertions.AnyValue::IsNot().Numeric());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        // SHOULD NOT THROW
-        Tester.RunTest("AnyValue::Is().Numeric()) => 42 - should not throw", () => {
-
-            Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(42, Assertions.AnyValue::Is().Numeric());
-            });
-        });
-
-        Tester.RunTest("AnyValue::Is().Numeric()) => 42.3 - should not throw", () => {
-
-            Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(42.3, Assertions.AnyValue::Is().Numeric());
-            });
-        });
-
-        Tester.RunTest("AnyValue::IsNot().Numeric()) => 'test' - should not throw", () => {
-
-            Assert::DoesNotThrow(() => {
-                Assertions.Assert::That("test", Assertions.AnyValue::IsNot().Numeric());
-            });
-        });
-
-    Tester.EndTests();
-
-    Tester.BeginTests("Array()");
-
-        // NULL
-        Tester.RunTest("AnyValue::Is().Array() => null - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That(null, Assertions.AnyValue::Is().Array());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("AnyValue::IsNot().Array() => null - should not throw", () => {
-
-            Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(null, Assertions.AnyValue::IsNot().Array());
-            });
-        });
-
-        // SHOULD THROW
-        Tester.RunTest("AnyValue::Is().Array()) => true - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That(true, Assertions.AnyValue::Is().Array());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("AnyValue::IsNot().Array()) => [] - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That([], Assertions.AnyValue::IsNot().Array());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        // SHOULD NOT THROW
-        Tester.RunTest("AnyValue::Is().Array()) => [] - should not throw", () => {
-
-            Assert::DoesNotThrow(() => {
-                Assertions.Assert::That([], Assertions.AnyValue::Is().Array());
-            });
-        });
-
-        Tester.RunTest("AnyValue::IsNot().Array()) => 42 - should not throw", () => {
-
-            Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(42, Assertions.AnyValue::IsNot().Array());
-            });
-        });
-
-    Tester.EndTests();
-
-    Tester.BeginTests("Struct()");
-
-        // NULL
-        Tester.RunTest("AnyValue::Is().Struct() => null - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That(null, Assertions.AnyValue::Is().Struct());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("AnyValue::IsNot().Struct() => null - should not throw", () => {
-
-            Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(null, Assertions.AnyValue::IsNot().Struct());
-            });
-        });
-
-        // SHOULD THROW
-        Tester.RunTest("AnyValue::Is().Struct()) => true - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That(true, Assertions.AnyValue::Is().Struct());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("AnyValue::IsNot().Struct()) => {} - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That({}, Assertions.AnyValue::IsNot().Struct());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        // SHOULD NOT THROW
-        Tester.RunTest("AnyValue::Is().Struct()) => {} - should not throw", () => {
-
-            Assert::DoesNotThrow(() => {
-                Assertions.Assert::That({}, Assertions.AnyValue::Is().Struct());
-            });
-        });
-
-        Tester.RunTest("AnyValue::IsNot().Struct()) => 42 - should not throw", () => {
-
-            Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(42, Assertions.AnyValue::IsNot().Struct());
-            });
+            }, expectedAssertionType);
         });
 
     Tester.EndTests();
 
     Tester.BeginTests("Boolean()");
 
-        // NULL
-        Tester.RunTest("AnyValue::Is().Boolean() => null - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That(null, Assertions.AnyValue::Is().Boolean());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("AnyValue::IsNot().Boolean() => null - should not throw", () => {
+        Tester.RunTest("When Is.Boolean against a bool then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(null, Assertions.AnyValue::IsNot().Boolean());
+                Assertions.Assert::That(true, Assertions.AnyValue::Is().Boolean());
             });
         });
 
-        // SHOULD THROW
-        Tester.RunTest("AnyValue::Is().Boolean()) => 42 - should throw", () => {
-
-            Assert::Throws(() => {
-                Assertions.Assert::That(42, Assertions.AnyValue::Is().Boolean());
-            }, Assertions.Assert::GetAssertionType());
-        });
-
-        Tester.RunTest("AnyValue::IsNot().Boolean()) => true - should throw", () => {
+        Tester.RunTest("When IsNot.Boolean against a bool then throw", () => {
 
             Assert::Throws(() => {
                 Assertions.Assert::That(true, Assertions.AnyValue::IsNot().Boolean());
-            }, Assertions.Assert::GetAssertionType());
+            }, expectedAssertionType);
         });
 
-        // SHOULD NOT THROW
-        Tester.RunTest("AnyValue::Is().Boolean()) => false - should not throw", () => {
+        Tester.RunTest("When Is.Boolean against another type then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(1, Assertions.AnyValue::Is().Boolean());
+            }, expectedAssertionType);
+        });
+
+    Tester.EndTests();
+
+    Tester.BeginTests("Array()");
+
+        Tester.RunTest("When Is.Array against an array then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(false, Assertions.AnyValue::Is().Boolean());
+                Assertions.Assert::That([], Assertions.AnyValue::Is().Array());
             });
         });
 
-        Tester.RunTest("AnyValue::IsNot().Boolean()) => 42 - should not throw", () => {
+        Tester.RunTest("When IsNot.Array against an array then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That([], Assertions.AnyValue::IsNot().Array());
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.Array against another type then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(1, Assertions.AnyValue::Is().Array());
+            }, expectedAssertionType);
+        });
+
+    Tester.EndTests();
+
+    Tester.BeginTests("Struct()");
+
+        Tester.RunTest("When Is.Struct against a struct then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(42, Assertions.AnyValue::IsNot().Boolean());
+                Assertions.Assert::That({}, Assertions.AnyValue::Is().Struct());
             });
+        });
+
+        Tester.RunTest("When IsNot.Struct against a struct then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That({}, Assertions.AnyValue::IsNot().Struct());
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.Struct against another type then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(1, Assertions.AnyValue::Is().Struct());
+            }, expectedAssertionType);
         });
 
     Tester.EndTests();
 
     Tester.BeginTests("Throwing()");
 
-        Tester.RunTest("AnyValue::Is().Throwing() => null = should throw", () => {
-
-            var errorMessage = Assert::Throws(() => {
-                    Assertions.Assert::That(null, Assertions.AnyValue::Is().Throwing());
-                },
-                Assertions.Assert::GetAssertionType()
-            );
-
-            if (errorMessage != "Error asserting whether value throws or not because it is not a function or a closure") {
-                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-            }
-        });
-
-        Tester.RunTest("AnyValue::IsNot().Throwing() => null = should throw", () => {
-
-            var errorMessage = Assert::Throws(() => {
-                    Assertions.Assert::That(null, Assertions.AnyValue::IsNot().Throwing());
-                },
-                Assertions.Assert::GetAssertionType()
-            );
-
-            if (errorMessage != "Error asserting whether value throws or not because it is not a function or a closure") {
-                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-            }
-        });
-
-        Tester.RunTest("AnyValue::Is().Throwing() => not a function = should throw", () => {
-
-            var errorMessage = Assert::Throws(() => {
-                    Assertions.Assert::That(1, Assertions.AnyValue::Is().Throwing());
-                },
-                Assertions.Assert::GetAssertionType()
-            );
-
-            if (errorMessage != "Error asserting whether value throws or not because it is not a function or a closure") {
-                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-            }
-        });
-        // AnyValue::Is().Throwing()
-        Tester.RunTest("AnyValue::Is().Throwing() => closure that does not throw = should throw", () => {
-
-            var errorMessage = Assert::Throws(() => {
-                    Assertions.Assert::That(() => true, Assertions.AnyValue::Is().Throwing());
-                },
-                Assertions.Assert::GetAssertionType()
-            );
-
-            if (errorMessage != "Expected value to throw but it did not") {
-                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-            }
-        });
-
-        Tester.RunTest("AnyValue::Is().Throwing() => closure that does throw = should not throw", () => {
+        Tester.RunTest("When Is.Throwing against a function that throws then pass", () => {
 
             Assert::DoesNotThrow(() => {
-                Assertions.Assert::That(() => throw("Please catch me"), Assertions.AnyValue::Is().Throwing());
+                Assertions.Assert::That(
+                    () => { throw("I throw!") },
+                    Assertions.AnyValue::Is().Throwing()
+                );
             });
         });
 
-        Tester.RunTest("AnyValue::Is().Throwing() => closure that throws wrong type = should throw", () => {
+        Tester.RunTest("When Is.Throwing against a function that does not throw then throw", () => {
 
-            var errorMessage = Assert::Throws(() => {
-                    Assertions.Assert::That(() => throw("I am a test error", "WrongType"), Assertions.AnyValue::Is().Throwing("TheRightType"));
-                },
-                Assertions.Assert::GetAssertionType()
-            );
-
-            if (errorMessage != "Expected value to throw an exception of type TheRightType but it was WrongType") {
-                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-            }
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    () => 42,
+                    Assertions.AnyValue::Is().Throwing()
+                );
+            }, expectedAssertionType);
         });
 
-        Tester.RunTest("AnyValue::Is().Throwing() => closure that throws the correct type = should not throw", () => {
+        Tester.RunTest("When IsNot.Throwing against a function that throws then throw", () => {
 
-            Assert::DoesNotThrow(() => {
-                    Assertions.Assert::That(() => throw("I am a test error", "MyExceptionType"), Assertions.AnyValue::Is().Throwing("MyExceptionType"));
-                }
-            );
-        });
-        // AnyValue::IsNot().Throwing()
-        Tester.RunTest("AnyValue::IsNot().Throwing() => closure that does throw = should throw", () => {
-
-            var errorMessage = Assert::Throws(() => {
-                    Assertions.Assert::That(() => throw("Naughty error"), Assertions.AnyValue::IsNot().Throwing());
-                },
-                Assertions.Assert::GetAssertionType()
-            );
-
-            if (errorMessage != "Expected value to not throw but it did") {
-                throw("Thrown exception does not have the message we expected. Actual: #errorMessage#");
-            }
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    () => { throw("I throw!") },
+                    Assertions.AnyValue::IsNot().Throwing()
+                );
+            }, expectedAssertionType);
         });
 
-        Tester.RunTest("AnyValue::IsNot().Throwing() => closure that does not throw = should not throw", () => {
+        Tester.RunTest("When Is.Throwing against another type then throw", () => {
 
-            Assert::DoesNotThrow(() => {
-                    Assertions.Assert::That(() => true, Assertions.AnyValue::IsNot().Throwing());
-                }
-            );
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "test",
+                    Assertions.AnyValue::Is().Throwing()
+                );
+            }, expectedAssertionType);
         });
 
     Tester.EndTests();
