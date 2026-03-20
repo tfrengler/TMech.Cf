@@ -143,7 +143,7 @@ component displayname="AnyValue" extends="ConstraintChain" modifier="final" outp
         var testFn = (any value) => {
             if (!isCustomFunction(arguments.value)) {
                 throw(
-                    message = "Error determining if function throws because the value is not a function",
+                    message = "Error determining whether a function throws or not because the value is not a function",
                     //detail  = "minValueExclusive: #outerArgs.minValueExclusive# | maxValueExclusive: #outerArgs.maxValueExclusive#",
                     type    = "#Constraint::GetBaseAssertionType()#.Any"
                 );

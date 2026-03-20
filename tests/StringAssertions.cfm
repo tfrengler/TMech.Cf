@@ -572,6 +572,60 @@
         });
 
     Tester.EndTests();
+
+    Tester.BeginTests("ValidJSON()");
+
+        Tester.RunTest("When Is.ValidJSON against an empty string then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "",
+                    Assertions.StringValue::Is().ValidJSON()
+                );
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.ValidJSON against {} then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "{}",
+                    Assertions.StringValue::Is().ValidJSON()
+                );
+            });
+        });
+
+        Tester.RunTest("When Is.ValidJSON against {'test': 1} then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "{'test': 1}",
+                    Assertions.StringValue::Is().ValidJSON()
+                );
+            });
+        });
+
+        Tester.RunTest("When Is.ValidJSON against {'test': 1,} then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    "{'test': 1,}",
+                    Assertions.StringValue::Is().ValidJSON()
+                );
+            });
+        });
+
+        Tester.RunTest("When Is.ValidJSON against {'test1': 1, 'test2'} then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That(
+                    "{'test1': 1, 'test2'}",
+                    Assertions.StringValue::Is().ValidJSON()
+                );
+            }, expectedAssertionType);
+        });
+
+    Tester.EndTests();
 </cfscript>
 
 </body>

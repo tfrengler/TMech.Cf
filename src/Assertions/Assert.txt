@@ -1,42 +1,42 @@
 Any
 {
-    ✅ Throwing()
-    ✅ String()
-    ✅ Numeric()
-    ✅ Boolean()
-    ✅ Array()
-    ✅ Struct()
+    ✅ Throwing
+    ✅ String
+    ✅ Numeric
+    ✅ Boolean
+    ✅ Array
+    ✅ Struct
 }
 
 ######################################################################################################
 
 String
 {
-    ✅ IgnoringCasing()
-    ✅ Nothing()
-    ✅ EqualTo()
-    ✅ StartingWith()
-    ✅ EndingWith()
-    ✅ Containing()
-    ✅ Matching()
+    ✅ IgnoringCasing
+    ✅ Nothing
+    ✅ EqualTo
+    ✅ StartingWith
+    ✅ EndingWith
+    ✅ Containing
+    ✅ Matching
 }
 
 ######################################################################################################
 
 Number
 {
-    ✅ Zero()
-    ✅ LessThanOrEqualToZero()
-    ✅ LessThan()
-    ✅ GreaterThan()
-    ✅ EqualTo()
+    ✅ Zero
+    ✅ LessThanOrEqualToZero
+    ✅ LessThan
+    ✅ GreaterThan
+    ✅ EqualTo
 }
 
 ######################################################################################################
 
 Array
 {
-    ✅ Empty()
+    ✅ Empty
     ✅ SatisfiedByAny
     ✅ SatisfiedByAll
     ✅ SimilarTo
@@ -48,18 +48,22 @@ Array
 
 Date
 {
+    ❌ WhenInclusive
     ❌ EqualTo
     ❌ Before
     ❌ After
-    ❌ BetweenInclusive
-    ❌ BetweenExclusive
+    ❌ Between
 }
 
 ######################################################################################################
 
 Struct
 {
-    ❌ ContainingProperty
-    ❌ Empty
-    ❌ HavingCount
+    ✅ Empty
+    ✅ ContainingKey
+    ✅ ContainingValue
+    ✅ ContainingValueAtKey
+    ✅ ValueAtKeySatisfiedBy
+    ✅ SatisfiedByAny
+    ✅ SatisfiedByAll
 }

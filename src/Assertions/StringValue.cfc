@@ -176,7 +176,7 @@ component displayname="StringValue" extends="ConstraintChain" modifier="final" o
         return this;
     }
 
-    public AnyValue function ValidJSON() output = false {
+    public StringValue function ValidJSON() output = false {
 
         var testFn = (string value) => {
             return IsJson(arguments.value);
@@ -191,7 +191,7 @@ component displayname="StringValue" extends="ConstraintChain" modifier="final" o
                 negated         = variables.negated,
                 testFn          = testFn,
                 failMessage     = failMessage,
-                exceptionType   = "Any"
+                exceptionType   = "String"
             )
         );
 
