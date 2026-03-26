@@ -27,61 +27,6 @@ component displayname="Selenium" modifier="final" output="false" accessors="fals
         return this;
     }
 
-    /**
-     * @hint Tests whether an object is a Java-object and optionally whether it is derived from - or is a specific - Java-object.
-     *
-     * @object          The object to test.
-     * @javaClassName   Optional. The name of the Java-class you expect arguments.object to be.
-     * @includeDerived  Optional. Determines whether javaClassName should match any derived classes as well or just the concrete class of the object itself.
-     */
-    public static boolean function isJavaObject(required any object, string javaClassName = "", boolean includeDerived = true) output = true
-    {
-        if (isNull(arguments.object)) return false;
-
-        if (
-            isSimpleValue(arguments.object) is true ||
-            isArray(arguments.object) is true
-        ) {
-            return false;
-        }
-
-        arguments.javaClassName = isNull(arguments.javaClassName) ? "" : trim(arguments.javaClassName);
-        var metadata = getMetadata(arguments.object);
-        var isJavaObject = metadata.getClass().getName() == "java.lang.Class";
-        var mustBeSpecificClass = arguments.javaClassName.len() > 0;
-
-        if (!isJavaObject) {
-            return false;
-        }
-
-        if (!mustBeSpecificClass) {
-            return true;
-        }
-
-        var currentJavaClass = arguments.object.getClass();
-        var actualClassName = currentJavaClass.getName();
-
-        while(true) {
-            if (actualClassName == arguments.javaClassName) {
-                return true;
-            }
-
-            if (!arguments.includeDerived) {
-                break;
-            }
-
-            currentJavaClass = currentJavaClass.getSuperClass();
-
-            if (isNull(currentJavaClass)) {
-                return false;
-            }
-
-            actualClassName = currentJavaClass.getName();
-        }
-
-        return false;
-    }
-
     // Enums, interfaces and static classes go here
     property name="ProxyType"               type="org.openqa.selenium.Proxy$ProxyType" getter="false" setter="false";
     property name="By"                      type="org.openqa.selenium.By" getter="false" setter="false";

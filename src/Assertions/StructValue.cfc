@@ -133,6 +133,8 @@ component displayname="StructValue" extends="ConstraintChain" modifier="final" o
 
     /**
      * @hint Asserts that a struct contains a value at a specific key that satisfies a predicate. Searches both top level and nested structures.
+     *
+     * @predicate A function to test the value against. Receives the value as an argument and is expected to return true or false.
      */
     public StructValue function ValueAtKeySatisfiedBy(required string key, required function predicate) output = false {
 
@@ -256,4 +258,29 @@ component displayname="StructValue" extends="ConstraintChain" modifier="final" o
 
         return this;
     }
+    /*
+    public StructValue function EqualTo(required struct otherStruct) output = false {
+
+        var capturedOtherStruct = arguments.otherStruct;
+
+        var testFn = (struct value) => {
+            // return structEquals(arguments.value, capturedOtherStruct);
+        };
+
+        var failMessage = variables.negated
+            ? "Expected structs to NOT be equal"
+            : "Expected structs to be equal";
+
+        variables.constraints.append(
+            new Constraint(
+                negated         = variables.negated,
+                testFn          = testFn,
+                failMessage     = failMessage,
+                exceptionType   = "Struct"
+            )
+        );
+
+        return this;
+    }
+    */
 }

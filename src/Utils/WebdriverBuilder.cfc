@@ -146,7 +146,7 @@ component displayname="WebdriverBuilder" modifier="final" output="false" accesso
      * Only relevant for webdrivers not running against a remote server.
      */
     public WebdriverBuilder function UsingDriverService(required any service) output = false {
-        if (!Selenium::IsJavaObject(arguments.service, "org.openqa.selenium.remote.service.DriverService")) {
+        if (!new Utils.ObjectUtils().isJavaObject(arguments.service, "org.openqa.selenium.remote.service.DriverService")) {
             throw("Expected argument 'service' to be a Java-object (sub-class of 'org.openqa.selenium.remote.service.DriverService')");
         }
 
