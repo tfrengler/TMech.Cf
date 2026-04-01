@@ -1,36 +1,89 @@
 /**
- * @hint Component representing Selenium. Serves as a helper interface for resolving and getting references to underlying Selenium Java classes, types, enums etc.
+ * @hint Wraps a struct and allows you to compare it to other structs.
  */
 component displayname="StructComparer" modifier="final" output="false" accessors="false" persistent="true" {
 
-    property name="structure" type="struct" setter="false" getter="false";
+    // PRIVATE
+    // property name="structure" type="struct" setter="false" getter="false";
     // Array of structs. Layout: { 1: first struct, 2: second struct }
     property name="previouslyComparedStructs" type="array" setter="false" getter="false";
     property name="maxDepth" type="numeric" setter="false" getter="false";
     property name="currentDepth" type="numeric" setter="false" getter="false";
     property name="typeOf" type="function" setter="false" getter="false";
+    property name="trace" type="boolean" setter="false" getter="false";
+    property name="strictEqualityCheck" type="boolean" setter="false" getter="false";
 
-    public StructComparer function Init(required struct structure) output = false {
+    // PUBLIC
+    property name="traceLog" type="array" setter="false" getter="true";
+
+    public StructComparer function Init() output = false {
 
         variables.previouslyComparedStructs = [];
-        variables.structure = arguments.structure;
+        // variables.structure = arguments.structure;
         variables.maxDepth = 32;
         variables.currentDepth = 1;
         variables.typeOf = new Utils.ObjectUtils().typeOf;
+        variables.trace = false;
+        variables.traceLog = [];
+        variables.strictEqualityCheck = true;
 
         return this;
     }
 
-    public boolean function isSimilarTo(required struct otherStruct) output = false {
-        return compareStructs(variables.structure, arguments.otherStruct);
+    // PUBLIC
+
+    /**
+     * @hint Enables trace logging. The log can can be retrieved by calling getTraceLog().
+     * NOTE: The log is cleared and repopulated every time IsSimilarTo() is called.
+     */
+    public StructComparer function WithTracing() output = false {
+        variables.trace = true;
+        return this;
     }
 
-    private boolean function compareStructs(required struct first, required struct second) output = false {
+    /**
+     * @hint Sets the max depth allowed when recursing into nested arrays and structs.
+     *
+     * @depth The maximum depth. Cannot be less than 1. If that is the case then 32 is used instead.
+     */
+    public StructComparer function WithMaxDepth(required numeric depth) output = false {
+        if (arguments.maxDepth < 1) {
+            arguments.maxDepth = 32;
+        }
+
+        variables.maxDepth = arguments.depth;
+        return this;
+    }
+
+    /**
+     * @hint Normal comparison on simple values is strict, meaning they are checked on type and value.
+     * Calling this function disables the type check and allows for CFML to do implicit coercion first.
+     * Example: "42" == 42 becomes true, where normally it would be false.
+     */
+    public StructComparer function AllowCoercionWhenComparing() output = false {
+        variables.strictEqualityCheck = false;
+        return this;
+    }
+
+    public boolean function AreSimilar(required struct first, required struct second) output = false {
+        variables.traceLog = [];
+        variables.AddTrace("IsSimilarTo initiating (allowing coercion when comparing simple values? #!variables.strictEqualityCheck#)");
+        return variables.CompareStructs(arguments.first, arguments.second);
+    }
+
+    // PRIVATE
+
+    private void function AddTrace(required string message) output = false {
+        if (!variables.trace) return;
+        variables.traceLog.append("#arguments.message# (depth: #variables.currentDepth#)");
+    }
+
+    private boolean function CompareStructs(required struct first, required struct second) output = false {
 
         variables.previouslyComparedStructs.append({1: arguments.first, 2: arguments.second});
 
         if (arguments.first === arguments.second) {
-            writeDump("Structs are the same");
+            variables.addTrace("Structs refer to the same instance, skip comparison");
             return true;
         }
 
@@ -38,13 +91,13 @@ component displayname="StructComparer" modifier="final" output="false" accessors
         var keysOfSecond = structKeyArray(arguments.second);
 
         if (keysOfFirst.len() != keysOfSecond.len()) {
-            writeDump("Structs have different amount of keys (first: #keysOfFirst.len()# vs second: #keysOfSecond.len()#)");
+            variables.addTrace("Structs have different amount of keys (first: #keysOfFirst.len()# vs second: #keysOfSecond.len()#)");
             return false;
         }
 
         for(var key in keysOfFirst) {
             if (arrayFind(keysOfSecond, key) == 0) {
-                writeDump("Struct does not contain key: #key# (keys of first: #arrayToList(keysOfFirst)# | keys of second: #arrayToList(keysOfSecond)#)");
+                variables.addTrace("Second struct does not contain key from first struct: #key# (keys of second: #arrayToList(keysOfSecond)#)");
                 return false;
             }
         }
@@ -57,8 +110,10 @@ component displayname="StructComparer" modifier="final" output="false" accessors
             var typeOfFirst = typeOf(itemFirst);
             var typeOfSecond = typeOf(itemSecond);
 
-            if (!compareValues(itemFirst, itemSecond, typeOfFirst, typeOfSecond)) {
-                writeDump("Values in key '#item#' are not equal"); //"Expected: #itemFirst# (#typeOf(itemFirst)#) vs actual: #itemSecond# (#typeOf(itemSecond)#)");
+            variables.addTrace("Comparing values in key '#item#'");
+            var keysEqualInValue = variables.CompareValues(itemFirst, itemSecond, typeOfFirst, typeOfSecond);
+
+            if (!keysEqualInValue) {
                 return false;
             }
         }
@@ -66,31 +121,36 @@ component displayname="StructComparer" modifier="final" output="false" accessors
         return true;
     }
 
-    private boolean function recurseOnStruct(required any first, required any second) output = false {
+    private boolean function RecurseOnStruct(required any first, required any second) output = false {
 
         var args = arguments;
         if (variables.currentDepth > variables.maxDepth) {
-            throw("Reached max recursion depth of nested structs (#variables.maxDepth#)");
+            throw("Reached max recursion depth of nested structs (#variables.maxDepth#)", "StructComparer.MaxDepthReached");
         }
 
-        var itemsAlreadyCompared = arraySome(variables.previouslyComparedStructs, (st) => {
-            return arguments.st.1 === args.First && arguments.st.2 === args.Second;
+        var itemsAlreadyCompared = arraySome(variables.previouslyComparedStructs, (required struct st) => {
+            return (arguments.st.1 === args.first && arguments.st.2 === args.second) ||
+                   (arguments.st.1 === args.second && arguments.st.2 === args.first)
         });
 
         if (itemsAlreadyCompared) {
-            writeDump("Structs already compared");
+            variables.addTrace("Structs have already been compared");
             return false;
         }
 
-        writeDump("Recursing into struct");
+        variables.addTrace("Recursing into struct");
+
         variables.currentDepth++;
-        return compareStructs(arguments.first, arguments.second);
+        var returnData = compareStructs(arguments.first, arguments.second);
+        variables.currentDepth--;
+
+        return returnData;
     }
 
-    private boolean function sequenceCompareArrays(required array first, required array second) output = false {
+    private boolean function SequenceCompareArrays(required array first, required array second) output = false {
 
         if (arguments.first.len() != arguments.second.len()) {
-            writeDump("Arrays do not have the same length (#first.len()# vs #second.len()#)");
+            variables.addTrace("Arrays do not have the same length (first: #arguments.first.len()# vs second: #arguments.second.len()#)");
             return false;
         }
 
@@ -108,51 +168,63 @@ component displayname="StructComparer" modifier="final" output="false" accessors
         return true;
     }
 
-    private boolean function compareValues(
+    private boolean function CompareValues(
         required any first,
         required any second,
         required string typeOfFirst,
         required string typeOfSecond) output = false
     {
-
-        if (arguments.typeOfFirst != typeOfSecond) {
-            writeDump("Values are not the same type (Expected: #arguments.typeOfFirst# vs actual: #typeOfSecond#)");
-            return false;
-        }
-
         // Can't do value or reference comparison here
         if (arguments.typeOfFirst == "null" && typeOfSecond == "null") {
+            variables.addTrace("Values are both null");
             return true;
         }
 
-        if (isSimpleValue(arguments.first)) {
-            if (arguments.first !== arguments.second) {
-                writeDump("Values are not the same. Expected: #arguments.first# (#arguments.typeOfFirst#) vs actual: #arguments.second# (#arguments.typeOfSecond#)");
+        var isValueSimple = isSimpleValue(arguments.first);
+        var typesMatch = arguments.typeOfFirst == typeOfSecond;
+        // If types don't match then:
+        // - When we DO strict equality checks on simple values it's a fail
+        // - When we DON'T do strict equality checks on simple values it's a pass
+        // - Regardless of strict quality checks on complex values it's a fail
+        var typeMatchFailed = !typesMatch && (
+            (variables.strictEqualityCheck && isValueSimple) ||
+            !isValueSimple
+        );
+
+        if (typeMatchFailed)
+        {
+            variables.addTrace("Values are not the same type (Expected: #arguments.typeOfFirst# vs actual: #arguments.typeOfSecond#)");
+            return false;
+        }
+
+        if (isValueSimple) {
+
+            var areValuesEqual = variables.strictEqualityCheck
+                ? arguments.first !== arguments.second
+                : arguments.first != arguments.second;
+
+            if (areValuesEqual) {
+                variables.addTrace("Values are NOT equal. Expected: #arguments.first# (#arguments.typeOfFirst#) vs actual: #arguments.second# (#arguments.typeOfSecond#)");
                 return false;
             }
-            writeDump("Values are the same. Expected: #arguments.first# (#arguments.typeOfFirst#) vs actual: #arguments.second# (#arguments.typeOfSecond#)");
+
+            variables.addTrace("Values are equal. Expected: #arguments.first# (#arguments.typeOfFirst#) and found: #arguments.second# (#arguments.typeOfSecond#)");
+            return true;
         }
 
         if (arguments.typeOfFirst == "struct") {
-            writeDump("Value is struct. Potential recursion");
             return recurseOnStruct(arguments.first, arguments.second);
         }
 
         if (arguments.typeOfFirst == "array") {
-            writeDump("Comparing arrays (#variables.currentDepth#)");
+            variables.addTrace("Found array. Comparing values in sequence");
             var arraysEqual = sequenceCompareArrays(arguments.first, arguments.second);
-            writeDump("Arrays are equal? #arraysEqual#");
             return arraysEqual;
         }
 
+        variables.addTrace("Values are complex, skipping equality check (type: #arguments.typeOfFirst#)");
         return true;
     }
-
-    /*
-        TODO:
-            Default value comparison is done on both type and value. Make it possible to allow for coercion.
-
-    */
 
     /*
     dateNow = now();

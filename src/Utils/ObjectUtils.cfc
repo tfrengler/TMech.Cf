@@ -58,7 +58,24 @@ component displayname="ObjectUtils" modifier="final" output="false" accessors="f
         return false;
     }
 
-    public string function typeOf(required any object) output = false {
+    /**
+     * @hint Returns the type of a given object as a string or "UNKNOWN" if type cannot be determined:
+     * String = "string" |
+     * Null = "null" |
+     * CFC = "full name of component" |
+     * Number = "numeric" |
+     * Bool = "boolean" |
+     * Date = "date" |
+     * Binary object = "binary" |
+     * Array = "array" |
+     * Function/closure/lambda = "function" |
+     * File object = "file" |
+     * Query = "query" |
+     * XML object = "xml" |
+     * Structure = "struct" |
+     * Java-object = "name of Java-class"
+     */
+    public string function TypeOf(required any object) output = false {
 
         if (isNull(arguments.object)) {
             return "null";
@@ -129,6 +146,6 @@ component displayname="ObjectUtils" modifier="final" output="false" accessors="f
             return "struct";
         }
 
-        throw("Unknown type");
+        return "UNKNOWN";
     }
 }
