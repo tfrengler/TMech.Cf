@@ -56,9 +56,9 @@ component displayname="StructComparer" modifier="final" output="false" accessors
     }
 
     /**
-     * @hint Normal comparison on simple values is strict, meaning they are checked on type and value.
+     * @hint Normal comparison on simple values is strict, meaning they are checked on both type and value.
      * Calling this function disables the type check and allows for CFML to do implicit coercion first.
-     * Example: "42" == 42 becomes true, where normally it would be false.
+     * Example: "42" == 42 or 1 == true becomes true, where normally it would be false.
      */
     public StructComparer function AllowCoercionWhenComparing() output = false {
         variables.strictEqualityCheck = false;
