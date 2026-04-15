@@ -4,7 +4,6 @@
 component displayname="StructComparer" modifier="final" output="false" accessors="false" persistent="true" {
 
     // PRIVATE
-    // property name="structure" type="struct" setter="false" getter="false";
     // Array of structs. Layout: { 1: first struct, 2: second struct }
     property name="previouslyComparedStructs" type="array" setter="false" getter="false";
     property name="maxDepth" type="numeric" setter="false" getter="false";
@@ -12,6 +11,7 @@ component displayname="StructComparer" modifier="final" output="false" accessors
     property name="typeOf" type="function" setter="false" getter="false";
     property name="trace" type="boolean" setter="false" getter="false";
     property name="strictEqualityCheck" type="boolean" setter="false" getter="false";
+    property name="caseSensitiveKeyComparison" type="boolean" setter="false" getter="false";
 
     // PUBLIC
     property name="traceLog" type="array" setter="false" getter="true";
@@ -19,13 +19,13 @@ component displayname="StructComparer" modifier="final" output="false" accessors
     public StructComparer function Init() output = false {
 
         variables.previouslyComparedStructs = [];
-        // variables.structure = arguments.structure;
         variables.maxDepth = 32;
         variables.currentDepth = 1;
         variables.typeOf = new Utils.ObjectUtils().typeOf;
         variables.trace = false;
         variables.traceLog = [];
         variables.strictEqualityCheck = true;
+        variables.caseSensitiveKeyComparison = true;
 
         return this;
     }
@@ -65,10 +65,19 @@ component displayname="StructComparer" modifier="final" output="false" accessors
         return this;
     }
 
+    public StructComparer function WithCaseInsensitiveKeyComparison() output = false {
+        variables.caseSensitiveKeyComparison = false;
+        return this;
+    }
+
     public boolean function AreSimilar(required struct first, required struct second) output = false {
         variables.traceLog = [];
-        variables.AddTrace("IsSimilarTo initiating (allowing coercion when comparing simple values? #!variables.strictEqualityCheck#)");
-        return variables.CompareStructs(arguments.first, arguments.second);
+        variables.AddTrace("Config: Strict equality check? #variables.strictEqualityCheck#. Case sensitive key comparison? #variables.caseSensitiveKeyComparison#");
+
+        var returnData = variables.CompareStructs(arguments.first, arguments.second);
+        variables.AddTrace("Struct are #returnData ? "" : "NOT "#similar");
+
+        return returnData;
     }
 
     // PRIVATE
@@ -96,7 +105,12 @@ component displayname="StructComparer" modifier="final" output="false" accessors
         }
 
         for(var key in keysOfFirst) {
-            if (arrayFind(keysOfSecond, key) == 0) {
+
+            var keyFoundInOther = variables.caseSensitiveKeyComparison
+                ? arrayFind(keysOfSecond, key) > 0
+                : arrayFindNoCase(keysOfSecond, key) > 0;
+
+            if (!keyFoundInOther) {
                 variables.addTrace("Second struct does not contain key from first struct: #key# (keys of second: #arrayToList(keysOfSecond)#)");
                 return false;
             }
@@ -123,10 +137,9 @@ component displayname="StructComparer" modifier="final" output="false" accessors
 
     private boolean function RecurseOnStruct(required any first, required any second) output = false {
 
+        variables.CheckRecursionDepth();
+
         var args = arguments;
-        if (variables.currentDepth > variables.maxDepth) {
-            throw("Reached max recursion depth of nested structs (#variables.maxDepth#)", "StructComparer.MaxDepthReached");
-        }
 
         var itemsAlreadyCompared = arraySome(variables.previouslyComparedStructs, (required struct st) => {
             return (arguments.st.1 === args.first && arguments.st.2 === args.second) ||
@@ -149,6 +162,8 @@ component displayname="StructComparer" modifier="final" output="false" accessors
 
     private boolean function SequenceCompareArrays(required array first, required array second) output = false {
 
+        variables.CheckRecursionDepth();
+
         if (arguments.first.len() != arguments.second.len()) {
             variables.addTrace("Arrays do not have the same length (first: #arguments.first.len()# vs second: #arguments.second.len()#)");
             return false;
@@ -159,12 +174,14 @@ component displayname="StructComparer" modifier="final" output="false" accessors
             var itemFirst = arguments.first[index];
             var itemSecond = arguments.second[index];
 
+            variables.AddTrace("Comparing values in index #index#");
             if (!compareValues(itemFirst, itemSecond, variables.typeof(itemFirst), variables.typeof(itemSecond)))
             {
                 return false;
             }
         }
 
+        variables.AddTrace("Arrays are equal in their values");
         return true;
     }
 
@@ -218,12 +235,22 @@ component displayname="StructComparer" modifier="final" output="false" accessors
 
         if (arguments.typeOfFirst == "array") {
             variables.addTrace("Found array. Comparing values in sequence");
-            var arraysEqual = sequenceCompareArrays(arguments.first, arguments.second);
+
+            variables.currentDepth++;
+            var arraysEqual = variables.SequenceCompareArrays(arguments.first, arguments.second);
+            variables.currentDepth--;
+
             return arraysEqual;
         }
 
         variables.addTrace("Values are complex, skipping equality check (type: #arguments.typeOfFirst#)");
         return true;
+    }
+
+    private void function CheckRecursionDepth() output = false {
+        if (variables.currentDepth > variables.maxDepth) {
+            throw("Reached max recursion depth of nested structs (#variables.maxDepth#)", "StructComparer.MaxDepthReached");
+        }
     }
 
     /*

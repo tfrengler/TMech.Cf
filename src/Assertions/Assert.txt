@@ -66,9 +66,4 @@ Struct
     ✅ ValueAtKeySatisfiedBy
     ✅ SatisfiedByAny
     ✅ SatisfiedByAll
-    ❌ EqualTo
-
-    StructCompareOptions
-    - CaseSensitiveKeys
-    - SamePropertyCount
 }
