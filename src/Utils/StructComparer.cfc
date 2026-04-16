@@ -47,8 +47,8 @@ component displayname="StructComparer" modifier="final" output="false" accessors
      * @depth The maximum depth. Cannot be less than 1. If that is the case then 32 is used instead.
      */
     public StructComparer function WithMaxDepth(required numeric depth) output = false {
-        if (arguments.maxDepth < 1) {
-            arguments.maxDepth = 32;
+        if (arguments.depth < 1) {
+            arguments.depth = 32;
         }
 
         variables.maxDepth = arguments.depth;
@@ -72,6 +72,9 @@ component displayname="StructComparer" modifier="final" output="false" accessors
 
     public boolean function AreSimilar(required struct first, required struct second) output = false {
         variables.traceLog = [];
+        variables.previouslyComparedStructs = [];
+        variables.currentDepth = 1;
+
         variables.AddTrace("Config: Strict equality check? #variables.strictEqualityCheck#. Case sensitive key comparison? #variables.caseSensitiveKeyComparison#");
 
         var returnData = variables.CompareStructs(arguments.first, arguments.second);
@@ -89,12 +92,12 @@ component displayname="StructComparer" modifier="final" output="false" accessors
 
     private boolean function CompareStructs(required struct first, required struct second) output = false {
 
-        variables.previouslyComparedStructs.append({1: arguments.first, 2: arguments.second});
-
         if (arguments.first === arguments.second) {
             variables.addTrace("Structs refer to the same instance, skip comparison");
             return true;
         }
+
+        variables.previouslyComparedStructs.append({1: arguments.first, 2: arguments.second});
 
         var keysOfFirst = structKeyArray(arguments.first);
         var keysOfSecond = structKeyArray(arguments.second);
