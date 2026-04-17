@@ -5,8 +5,16 @@
 </cfif>
 
 <cfif structKeyExists(URL, "Restart") >
+    <cfset pagePoolClear() />
+    <cfset componentCacheList() />
+
+    <cfobjectcache type="function"  action="clear">
+    <cfobjectcache type="include"   action="clear">
+    <cfobjectcache type="query"     action="clear">
+
     <cfset sessionInvalidate() />
     <cfset applicationStop() />
+
     <cfset request.action = "Restarted" />
     <cflocation addtoken="false" url="#CGI.SCRIPT_NAME#?action=restarted" />
 </cfif>

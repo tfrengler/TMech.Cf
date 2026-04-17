@@ -1,5 +1,5 @@
 /**
- * Quick and dirty assertion library to assist in unit testing. These are simple, static non-configurable assertions with no support for compound validations.
+ * Quick and dirty assertion library to assist testing. These are simple, static non-configurable assertions with no support for compound validations.
  */
 component displayname="Assert" modifier="final" output="false" accessors="false" persistent="true" {
 
@@ -73,7 +73,7 @@ component displayname="Assert" modifier="final" output="false" accessors="false"
 
     // EXCEPTIONS
 
-    public static void function Throws(required function functionThatThrows, string exceptionType) {
+    public static string function Throws(required function functionThatThrows, string exceptionType, function onThrowsWrongType) {
 
         var TheException = 0;
         var ThrewException = false;
@@ -98,11 +98,24 @@ component displayname="Assert" modifier="final" output="false" accessors="false"
         var ExpectedExpectionTypeName = arguments.exceptionType.trim();
 
         if (ExceptionTypeName != ExpectedExpectionTypeName) {
-            throw("Assertion failed! Expected function to throw an exception of type #arguments.exceptionType# but instead found #ExceptionTypeName#", "TMech.Cf.Assertion");
+            if (structKeyExists(arguments, "onThrowsWrongType")) {
+                arguments.onThrowsWrongType(TheException);
+            }
+
+            throw(
+                message="Assertion failed! Expected function to throw an exception of type #arguments.exceptionType# but instead found type: #ExceptionTypeName#",
+                detail="
+                    Error message = #TheException.Message# |
+                    Error detail = #TheException.Detail#
+                ",
+                type="TMech.Cf.Assertion"
+            );
         }
+
+        return TheException.message;
     }
 
-    public static void function DoesNotThrow(required function functionThatShouldNotThrow) {
+    public static void function DoesNotThrow(required function functionThatShouldNotThrow, function onThrows) {
 
         var TheException = 0;
         var ThrewException = false;
@@ -116,7 +129,18 @@ component displayname="Assert" modifier="final" output="false" accessors="false"
         }
 
         if (ThrewException) {
-            throw("Assertion failed! Expected function to not throw an exception but it did: #TheException.message# (type: #TheException.type#)", "TMech.Cf.Assertion");
+            if (structKeyExists(arguments, "onThrows")) {
+                arguments.onThrows(TheException);
+            }
+
+            throw(
+                message="Assertion failed! Expected function to not throw an exception but it did (type: #TheException.type#)",
+                detail="
+                    Error message = #TheException.Message# |
+                    Error detail = #TheException.Detail#
+                ",
+                type="TMech.Cf.Assertion"
+            );
         }
     }
 

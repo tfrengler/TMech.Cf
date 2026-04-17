@@ -21,10 +21,11 @@
             <cfabort/>
         </form>
     </cfif>
+    <a href='index.cfm' >BACK</a>
 </cfoutput>
 
 <cfscript>
-    Tester = new UnitTester("Version.cfc");
+    Tester = new TestRunner("Version.cfc");
 
     Tester.BeginTests("Init");
 

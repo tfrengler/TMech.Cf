@@ -20,6 +20,7 @@
     <cfset this.mappings["/Models"] = this.srcRoot & "Models" />
     <cfset this.mappings["/Services"] = this.srcRoot & "Services" />
     <cfset this.mappings["/Utils"] = this.srcRoot & "Utils" />
+    <cfset this.mappings["/Assertions"] = this.srcRoot & "Assertions" />
 
     <cffunction name="onApplicationStart" returnType="boolean" output="false">
     <cfscript>
