@@ -10,7 +10,7 @@ component displayname="ObjectUtils" modifier="final" output="false" accessors="f
      * @javaClassName   Optional. The name of the Java-class you expect arguments.object to be.
      * @includeDerived  Optional. Determines whether javaClassName should match any derived classes as well or just the concrete class of the object itself.
      */
-    public static boolean function isJavaObject(required any object, string javaClassName = "", boolean includeDerived = true) output = false
+    public static boolean function IsJavaObject(required any object, string javaClassName = "", boolean includeDerived = true) output = false
     {
         if (isNull(arguments.object)) return false;
 
@@ -75,7 +75,7 @@ component displayname="ObjectUtils" modifier="final" output="false" accessors="f
      * Structure = "struct" |
      * Java-object = "name of Java-class"
      */
-    public string function TypeOf(required any object) output = false {
+    public static string function TypeOf(required any object) output = false {
 
         if (isNull(arguments.object)) {
             return "null";

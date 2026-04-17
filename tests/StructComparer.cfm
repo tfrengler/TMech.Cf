@@ -21,28 +21,10 @@
             <cfabort/>
         </form>
     </cfif>
+    <a href='index.cfm' >BACK</a>
 </cfoutput>
 
 <cfscript>
-    /*
-        ✅ With strict equality check and structs with similar values but different types then fail
-        ✅ Without strict equality check and structs with similar values but different types then pass
-        ✅ Without strict equality check and structs with similar simple values and types then pass
-        ✅ With casesensitive keys and structs with same keys but different casing then fail
-        ✅ Without casesensitive keys and structs with same keys but different casing then pass
-        ✅ Array members where values are equal in sequence then pass
-        ✅ Array members where values are not equal in sequence then fail
-        ✅ With a struct as member that is equal in value then pass
-        ✅ With an array as member that contains a struct that is equal in value then pass
-        ✅ Struct recursion loop detection and prevention
-        Complex values that differ (in type) with strict equality check = fail
-        Complex values that differ (in type) without strict equality check = fail
-        Complex values that are equal (in type) with strict equality check = pass
-        Complex values that are equal (in type) without strict equality check = pass
-        Max depth check that fails on nested structs
-        Max depth check that fails on nested arrays
-    */
-
 
     void function AssertRecursedIntoArray(required array traceLog, required numeric depth) output = true
     {
@@ -98,10 +80,9 @@
 
     Tester = new TestRunner("StructComparer.cfc");
 
-    /*
-    Tester.BeginTests("Strict equality check");
+    Tester.BeginTests("Equality check, simple types");
 
-        Tester.RunTest("With strict equality check and structs with similar values but different types then fail", () => {
+        Tester.RunTest("With strict equality check and structs with similar simple values but different types then fail", () => {
 
             var comparer = new Utils.StructComparer().WithTracing();
 
@@ -159,7 +140,46 @@
             };
 
             Assert::IsTrue(comparer.AreSimilar(first, second));
-            writeDump(comparer.GetTraceLog());
+        });
+
+    Tester.EndTests();
+
+    Tester.BeginTests("Equality check, complex types");
+
+        Tester.RunTest("Without strict equality check and structs with similar complex types but different values then pass", () => {
+
+            var comparer = new Utils.StructComparer().WithTracing();
+
+            var first = {
+                xml: xmlNew(),
+                query: queryNew("")
+            };
+
+            var second = {
+                xml: xmlNew(),
+                query: queryNew("")
+            };
+
+            Assert::IsTrue(comparer.AreSimilar(first, second));
+        });
+
+        Tester.RunTest("Without strict equality check and structs with similar complex types but same values then pass", () => {
+
+            var comparer = new Utils.StructComparer().WithTracing();
+            var xmlObject = xmlNew();
+            var queryObject = queryNew("");
+
+            var first = {
+                xml: xmlObject,
+                query: queryObject
+            };
+
+            var second = {
+                xml: xmlObject,
+                query: queryObject
+            };
+
+            Assert::IsTrue(comparer.AreSimilar(first, second));
         });
 
     Tester.EndTests();
@@ -245,8 +265,6 @@
 
             Assert::IsTrue(comparer.AreSimilar(first, second));
             AssertRecursedIntoArray(comparer.GetTraceLog(), 1);
-
-            writeDump(comparer.GetTraceLog());
         });
 
         Tester.RunTest("Array members where values are not equal in sequence then fail", () => {
@@ -477,7 +495,7 @@
         });
 
     Tester.EndTests();
-    */
+
 </cfscript>
 </body>
 </html>

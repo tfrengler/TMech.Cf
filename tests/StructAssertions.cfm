@@ -21,6 +21,7 @@
             <cfabort/>
         </form>
     </cfif>
+    <a href='index.cfm' >BACK</a>
 </cfoutput>
 
 <cfscript>
@@ -396,12 +397,14 @@
 
             Assert::Throws(() => {
                 Assertions.Assert::That(
-                    { "test", nullValue() },
+                    { "test": nullValue() },
                     Assertions.StructValue::Is().Empty()
                 );
             }, expectedAssertionType);
         });
+
     Tester.EndTests();
+
 </cfscript>
 </body>
 </html>

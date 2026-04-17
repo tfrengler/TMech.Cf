@@ -21,7 +21,7 @@ component displayname="StructComparer" modifier="final" output="false" accessors
         variables.previouslyComparedStructs = [];
         variables.maxDepth = 32;
         variables.currentDepth = 1;
-        variables.typeOf = new Utils.ObjectUtils().typeOf;
+        variables.typeOf = Utils.ObjectUtils::TypeOf;
         variables.trace = false;
         variables.traceLog = [];
         variables.strictEqualityCheck = true;
@@ -255,46 +255,4 @@ component displayname="StructComparer" modifier="final" output="false" accessors
             throw("Reached max recursion depth of nested structs (#variables.maxDepth#)", "StructComparer.MaxDepthReached");
         }
     }
-
-    /*
-    dateNow = now();
-
-    testStruct1 = {
-        "string": "a string",
-        "integer": 42,
-        "float": 84.42,
-        "bool": true,
-        "date": dateNow,
-        "array": [1,2,3],
-        "struct": {a=1,b=2,c=3},
-        "query": queryNew("col1,col2"),
-        "func": (x) => x + 2,
-        "xml": xmlNew(),
-        "null": nullValue(),
-        "cfc": new DebugCFC(),
-        "java": createObject("java", "java.lang.StringBuilder").init("java-string"),
-        "file": fileOpen("Debug.cfm"),
-        "binary": fileReadBinary("Debug.cfm"),
-        // "TESTY": 1
-    }
-
-    testStruct2 = {
-        "string": "a string",
-        "integer": 42,
-        "float": 84.42,
-        "bool": true,
-        "date": dateNow,
-        "array": [1,2,3],
-        // "struct": {a=1,b=2,c=3},
-        "struct": {a=1,b=2,c=3},
-        "query": queryNew("col1,col2"),
-        "func": (x) => x + 2,
-        "xml": xmlNew(),
-        "null": nullValue(),
-        "cfc": new DebugCFC(),
-        "java": createObject("java", "java.lang.StringBuilder").init("java-string"),
-        "file": fileOpen("Debug.cfm"),
-        "binary": fileReadBinary("Debug.cfm")
-    }
-    */
 }
