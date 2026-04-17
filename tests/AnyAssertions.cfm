@@ -74,7 +74,7 @@
 
     Tester.BeginTests("Numeric()");
 
-        Tester.RunTest("When Is.Numeric against a string then pass", () => {
+        Tester.RunTest("When Is.Numeric against a number then pass", () => {
 
             Assert::DoesNotThrow(() => {
                 Assertions.Assert::That(1, Assertions.AnyValue::Is().Numeric());
@@ -92,6 +92,13 @@
 
             Assert::Throws(() => {
                 Assertions.Assert::That(true, Assertions.AnyValue::Is().Numeric());
+            }, expectedAssertionType);
+        });
+
+        Tester.RunTest("When Is.Numeric against a string consisting of numbers type then throw", () => {
+
+            Assert::Throws(() => {
+                Assertions.Assert::That("42", Assertions.AnyValue::Is().Numeric());
             }, expectedAssertionType);
         });
 
@@ -180,6 +187,16 @@
                 Assertions.Assert::That(
                     () => { throw("I throw!") },
                     Assertions.AnyValue::Is().Throwing()
+                );
+            });
+        });
+
+        Tester.RunTest("When IsNot.Throwing against a function that does not throw then pass", () => {
+
+            Assert::DoesNotThrow(() => {
+                Assertions.Assert::That(
+                    () => true,
+                    Assertions.AnyValue::IsNot().Throwing()
                 );
             });
         });
