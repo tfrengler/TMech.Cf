@@ -1,0 +1,69 @@
+Any
+{
+    ✅ Throwing
+    ✅ String
+    ✅ Numeric
+    ✅ Boolean
+    ✅ Array
+    ✅ Struct
+}
+
+######################################################################################################
+
+String
+{
+    ✅ IgnoringCasing
+    ✅ Nothing
+    ✅ EqualTo
+    ✅ StartingWith
+    ✅ EndingWith
+    ✅ Containing
+    ✅ Matching
+}
+
+######################################################################################################
+
+Number
+{
+    ✅ Zero
+    ✅ LessThanOrEqualToZero
+    ✅ LessThan
+    ✅ GreaterThan
+    ✅ EqualTo
+}
+
+######################################################################################################
+
+Array
+{
+    ✅ Empty
+    ✅ SatisfiedByAny
+    ✅ SatisfiedByAll
+    ✅ SimilarTo
+    ✅ SequenceEqualTo
+    ✅ Containing
+}
+
+######################################################################################################
+
+Date
+{
+    ❌ WhenInclusive
+    ❌ EqualTo
+    ❌ Before
+    ❌ After
+    ❌ Between
+}
+
+######################################################################################################
+
+Struct
+{
+    ✅ Empty
+    ✅ ContainingKey
+    ✅ ContainingValue
+    ✅ ContainingValueAtKey
+    ✅ ValueAtKeySatisfiedBy
+    ✅ SatisfiedByAny
+    ✅ SatisfiedByAll
+}

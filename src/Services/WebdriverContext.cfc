@@ -147,7 +147,9 @@ component displayname="WebdriverContext" output="false" accessors="false" persis
                 break;
             case "FIREFOX":
                 var returnData = variables.Selenium.FirefoxOptions().init();
-                returnData.addArguments("--headless");
+                if (variables.isHeadless) {
+                    returnData.addArguments("--headless");
+                }
                 var firefoxProfile = variables.Selenium.GetHandle("org.openqa.selenium.firefox.FirefoxProfile").init();
                 returnData.setProfile(firefoxProfile);
                 break;
